@@ -1,11 +1,3 @@
-package com.group6.interfaces;
-import com.group6.database.AircraftManagementDatabase;
-import com.group6.database.GateInfoDatabase;
-import com.group6.interfaces.CleaningSupervisor;
-import com.group6.interfaces.GateConsole;
-import com.group6.interfaces.MaintenanceInspector;
-import com.group6.interfaces.RadarTransceiver;
-
 /**
  * The Main class.
  *
