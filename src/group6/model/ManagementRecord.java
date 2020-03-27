@@ -232,7 +232,16 @@ public class ManagementRecord {
     status = TAXIING;
   }
 
-/** The Maintenance Supervisor has reported faults.
+  /**
+   * Accessor for the gate number
+   * @return Returns the number of the gate
+   */
+  public int getGateNumber() {
+    return gateNumber;
+  }
+
+
+  /** The Maintenance Supervisor has reported faults.
   *
   * The problem description is recorded.
   *

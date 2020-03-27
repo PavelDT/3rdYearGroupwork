@@ -27,7 +27,7 @@ import group6.controller.GateInfoDatabase;
  * depart. This class also registers as an observer of the GateInfoDatabase and
  * the AircraftManagementDatabase, and is notified whenever any change occurs in
  * those <<model>> elements. See written documentation.
- * 
+ *
  * @stereotype boundary/view/controller
  * @url element://model:project::SAAMS/design:view:::id1un8dcko4qme4cko4sw27
  * @url element://model:project::SAAMS/design:view:::id1jkohcko4qme4cko4svww
@@ -36,7 +36,7 @@ import group6.controller.GateInfoDatabase;
 public class GateConsole extends JFrame implements Observer, ActionListener {
 	/**
 	 * The GateConsole interface has access to the GateInfoDatabase.
-	 * 
+	 *
 	 * @supplierCardinality 1
 	 * @clientCardinality 0..*
 	 * @label accesses/observes
@@ -46,13 +46,13 @@ public class GateConsole extends JFrame implements Observer, ActionListener {
 
 	/**
 	 * The GateConsole interface has access to the AircraftManagementDatabase.
-	 * 
+	 *
 	 * @supplierCardinality 1
 	 * @clientCardinality 0..*
 	 * @directed
 	 * @label accesses/observes
 	 */
-	private AircraftManagementDatabase AircraftManagementDatabase;
+	private AircraftManagementDatabase aircraftManagementDatabase;
 
 	/**
 	 * This gate's gateNumber - for identifying this gate's information in the
@@ -73,16 +73,15 @@ public class GateConsole extends JFrame implements Observer, ActionListener {
 	private JTextArea gateInformation;
 
 	/**
-	 * 
-	 * @param AircraftManagementDatabase
+	 * Class constructor
+	 * @param aircraftManagementDatabase
 	 * @param gateInfoDatabase
 	 * @param gateNumber
 	 */
+	public GateConsole(AircraftManagementDatabase aircraftManagementDatabase, GateInfoDatabase gateInfoDatabase,
+					   int gateNumber) {
 
-	public GateConsole(AircraftManagementDatabase AircraftManagementDatabase, GateInfoDatabase gateInfoDatabase,
-			int gateNumber) {
-
-		this.AircraftManagementDatabase = AircraftManagementDatabase;
+		this.aircraftManagementDatabase = aircraftManagementDatabase;
 
 		this.gateInfoDatabase = gateInfoDatabase;
 
@@ -91,7 +90,7 @@ public class GateConsole extends JFrame implements Observer, ActionListener {
 		setTitle("Gate Console");
 		setLocation(40, 40);
 		setSize(500, 350);
-		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		Container window = getContentPane();
 		window.setLayout(new FlowLayout());
 
@@ -160,36 +159,36 @@ public class GateConsole extends JFrame implements Observer, ActionListener {
 		gateInformation.append(flightCode + " is currently unloading \n");
 
 		updateGateStatus();
-		flightCode.setText(AircraftManagementDatabase.getFlightCode(currentRecord));
+		flightCode.setText(aircraftManagementDatabase.getFlightCode(currentRecord));
 
 	}
 
 	private void unloadFlight() {
 		// UI THIS
-		int[] mCodes = AircraftManagementDatabase.getWithStatus(7);
+		int[] mCodes = aircraftManagementDatabase.getWithStatus(7);
 		int mCode = mCodes[0];
-		AircraftManagementDatabase.setStatus(mCode, 8);
+		aircraftManagementDatabase.setStatus(mCode, 8);
 	}
 
 	private void addPassengerToFlight() {
 		// UI THIS
 		PassengerDetails passengerName = new PassengerDetails(JOptionPane.showInputDialog("Passenger Name"));
-		int[] mCodes = AircraftManagementDatabase.getWithStatus(14);
+		int[] mCodes = aircraftManagementDatabase.getWithStatus(14);
 		int mCode = mCodes[0];
-		AircraftManagementDatabase.addPassenger(mCode, passengerName);
+		aircraftManagementDatabase.addPassenger(mCode, passengerName);
 
 	}
 
 	private void loadFlight() {
 		// UI THIS
-		AircraftManagementDatabase.getWithStatus(14);
+		aircraftManagementDatabase.getWithStatus(14);
 		updateGateStatus();
 
 	}
 
 	public int getRecord() {
-		for (int i = 0; i < AircraftManagementDatabase.maxMRs; i++) {
-			if (AircraftManagementDatabase.getGateNumber(i) == gateNumber) {
+		for (int i = 0; i < aircraftManagementDatabase.maxMRs; i++) {
+			if (aircraftManagementDatabase.getGateNumber(i) == gateNumber) {
 				currentRecord = i;
 			}
 		}
@@ -209,14 +208,14 @@ public class GateConsole extends JFrame implements Observer, ActionListener {
 					flightLoaded.setEnabled(false);
 				}
 				if (gateInfoDatabase.getStatus(gateNumber) == 2
-						&& AircraftManagementDatabase.getStatus(currentRecord) == 7) {
+						&& aircraftManagementDatabase.getStatus(currentRecord) == 7) {
 					flightDocked.setEnabled(false);
 					flightUnloaded.setEnabled(true);
 					addPassenger.setEnabled(false);
 					flightLoaded.setEnabled(false);
 				}
 				if (gateInfoDatabase.getStatus(gateNumber) == 2
-						&& AircraftManagementDatabase.getStatus(currentRecord) == 14) {
+						&& aircraftManagementDatabase.getStatus(currentRecord) == 14) {
 					flightDocked.setEnabled(false);
 					flightUnloaded.setEnabled(false);
 					addPassenger.setEnabled(true);

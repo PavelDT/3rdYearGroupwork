@@ -40,13 +40,13 @@ public class MaintenanceInspector extends JFrame implements ActionListener {
 	private JButton update;
 	private JButton exit;
 
-	public MaintenanceInspector(AircraftManagementDatabase aircraftManagementDatabase, String title, int locationX, int locationY) {
+	public MaintenanceInspector(AircraftManagementDatabase aircraftManagementDatabase) {
 
 		this.aircraftManagementDatabase = aircraftManagementDatabase;
-		setTitle("Controller1");
-		setLocation(locationX, locationY);
+		setTitle("Maintenance Inspector");
+		setLocation(40, 40);
 		setSize(450, 150);
-		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		Container window = getContentPane();
 		window.setLayout(new FlowLayout());
 

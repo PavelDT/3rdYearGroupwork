@@ -36,13 +36,13 @@ public class RefuellingSupervisor extends JFrame implements ActionListener {
 	private JButton update;
 	private JButton exit;
 
-	public RefuellingSupervisor(AircraftManagementDatabase aircraftManagementDatabase, String title, int locationX, int locationY) {
+	public RefuellingSupervisor(AircraftManagementDatabase aircraftManagementDatabase) {
 		this.aircraftManagementDatabase = aircraftManagementDatabase;
 		
-		setTitle("Controller"); 
-		setLocation(locationX, locationY);
+		setTitle("Refuelling Supervisor");
+		setLocation(40, 40);
 		setSize(450, 150);
-		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		Container window = getContentPane();
 		window.setLayout(new FlowLayout());
 		

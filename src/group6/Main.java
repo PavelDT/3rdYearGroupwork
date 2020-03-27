@@ -1,13 +1,11 @@
-package group6.model;
+package group6;
+
 import group6.controller.AircraftManagementDatabase;
 import group6.controller.GateInfoDatabase;
-import group6.view.CleaningSupervisor;
-import group6.view.GateConsole;
-import group6.view.MaintenanceInspector;
-import group6.view.RadarTransceiver;
+import group6.view.*;
 
 /**
- * The Main class.
+ * The group6.Main class.
  *
  * The principal component is the usual main method required by Java application
  * to launch the application.
@@ -33,12 +31,13 @@ public class Main {
        // Instantiate and show all interfaces as Frames
 
 		new GOC(aircraftManagementDatabase, gateInfoDatabase);
-		new LATC(aircraftManagementDatabase);
+		new LATC(aircraftManagementDatabase, gateInfoDatabase);
 		new MaintenanceInspector(aircraftManagementDatabase);
 		new CleaningSupervisor(aircraftManagementDatabase);
 		new RefuellingSupervisor(aircraftManagementDatabase);
-		new GateConsole(aircraftManagementDatabase, gateInfoDatabase);
+		// todo this gate should come from somewhere and probably shouldn't be a param
+		int dummyGateNumber = 5;
+		new GateConsole(aircraftManagementDatabase, gateInfoDatabase, dummyGateNumber);
 		new RadarTransceiver(aircraftManagementDatabase);
-
 	}
 }

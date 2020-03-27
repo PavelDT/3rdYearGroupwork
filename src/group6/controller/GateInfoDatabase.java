@@ -49,9 +49,13 @@ public class GateInfoDatabase  extends Observable  {
 	/**
 	 * Obtain and return the status of the given gate identified by the gateNumber parameter.
 	 */
-	  public int getStatus(int gateNumber){
-		  return gates[gateNumber].getStatus();
-	  }
+	public int getStatus(int gateNumber) {
+		if (gates.length <= gateNumber && gates.length < 0) {
+			return gates[gateNumber].getStatus();
+		}
+		// -1 signifies invalid status
+		return -1;
+	}
 
 
 	/**

@@ -95,7 +95,8 @@ public class LATC extends JFrame implements Observer {
 
 		if (aircraftDatabase != null) {
 			aircraftManagementDatabase = aircraftDatabase;
-		} else if (gateDatabase != null) {
+		}
+		if (gateDatabase != null) {
 			gateInfoDatabase = gateDatabase;
 		}
 	}

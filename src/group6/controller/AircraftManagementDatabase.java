@@ -42,6 +42,16 @@ public class AircraftManagementDatabase extends Observable{
     }
 
     /**
+     * Accessor for gate number
+     * @param mCode
+     * @return returns gate number
+     */
+    public int getGateNumber(int mCode) {
+        return managementRecords[mCode].getGateNumber();
+    }
+
+
+    /**
      * The array of ManagementRecords. Attribute maxMRs specifies how large this array should be.
      * Initialize to a collection of MRs each in the FREE state.
      * Note: This array could be replaced by another other suitable collection data structure.
@@ -73,6 +83,9 @@ public class AircraftManagementDatabase extends Observable{
     public static AircraftManagementDatabase getInstance(ManagementRecord[] managementRecords) {
         if (instance == null) {
             instance = new AircraftManagementDatabase();
+            // for all observers observing the AircraftManagementDatabase
+            instance.setChanged();
+            instance.notifyObservers();
         }
         return instance;
     }
@@ -88,6 +101,8 @@ public class AircraftManagementDatabase extends Observable{
     public void setStatus(int mCode, int newStatus) {
         if(managementRecords[mCode].getStatus() != newStatus) {
             managementRecords[mCode].setStatus(newStatus);
+            setChanged();
+            notifyObservers(instance);
         }
     }
 
@@ -96,6 +111,11 @@ public class AircraftManagementDatabase extends Observable{
      * The request is forwarded to the MR.
      */
     public String getFlightCode(int mCode) {
+        // safeguard against a null
+        if (managementRecords[mCode] == null) {
+            return "No such management record";
+        }
+
         return managementRecords[mCode].getFlightCode();
     }
 
@@ -107,7 +127,7 @@ public class AircraftManagementDatabase extends Observable{
     public int[] getWithStatus(int statusCode) {
         int[] mCodesWithStatus = new int[maxMRs];
         for (int i = 0; i < managementRecords.length; i++) {
-            if (statusCode == managementRecords[i].getStatus()) {
+            if (managementRecords[i] != null && statusCode == managementRecords[i].getStatus()) {
                 mCodesWithStatus[i] = i;
             }
         }
@@ -123,6 +143,8 @@ public class AircraftManagementDatabase extends Observable{
         for(int i =0; i<managementRecords.length; i++) {
             if(managementRecords[i].getStatus() == ManagementRecord.FREE) {
                 managementRecords[i].radarDetect(fd);
+                setChanged();
+                notifyObservers(instance);
             }
         }
     }
@@ -133,6 +155,8 @@ public class AircraftManagementDatabase extends Observable{
      */
     public void radarLostContact(int mCode) {
         managementRecords[mCode].radarLostContact();
+        setChanged();
+        notifyObservers(instance);
     }
 
     /**
@@ -141,6 +165,8 @@ public class AircraftManagementDatabase extends Observable{
      */
     public void taxiTo(int mCode, int gateNumber) {
         managementRecords[mCode].taxiTo(gateNumber);
+        setChanged();
+        notifyObservers(instance);
     }
 
     /**
@@ -149,6 +175,8 @@ public class AircraftManagementDatabase extends Observable{
      */
     public void faultsFound(int mCode, String description) {
         managementRecords[mCode].faultsFound(description);
+        setChanged();
+        notifyObservers(instance);
     }
 
     /**
@@ -157,6 +185,8 @@ public class AircraftManagementDatabase extends Observable{
      */
     public void addPassenger(int mCode, PassengerDetails details) {
         managementRecords[mCode].addPassenger(details);
+        setChanged();
+        notifyObservers(instance);
     }
 
     /**
