@@ -1,11 +1,10 @@
-package com.group6.interfaces;
+package group6.view;
 import javax.swing.*;
 
-import com.group6.database.AircraftManagementDatabase;
-import com.group6.database.GateInfoDatabase;
+import group6.controller.AircraftManagementDatabase;
+import group6.controller.GateInfoDatabase;
 
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 

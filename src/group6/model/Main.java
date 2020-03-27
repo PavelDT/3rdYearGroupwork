@@ -1,10 +1,10 @@
-package com.group.data;
-import com.group6.database.AircraftManagementDatabase;
-import com.group6.database.GateInfoDatabase;
-import com.group6.interfaces.CleaningSupervisor;
-import com.group6.interfaces.GateConsole;
-import com.group6.interfaces.MaintenanceInspector;
-import com.group6.interfaces.RadarTransceiver;
+package group6.model;
+import group6.controller.AircraftManagementDatabase;
+import group6.controller.GateInfoDatabase;
+import group6.view.CleaningSupervisor;
+import group6.view.GateConsole;
+import group6.view.MaintenanceInspector;
+import group6.view.RadarTransceiver;
 
 /**
  * The Main class.

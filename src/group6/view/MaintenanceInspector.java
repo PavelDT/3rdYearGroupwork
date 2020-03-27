@@ -1,7 +1,7 @@
-package com.group6.interfaces;
+package group6.view;
 import javax.swing.*;
 
-import com.group6.database.AircraftManagementDatabase;
+import group6.controller.AircraftManagementDatabase;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
