@@ -74,8 +74,6 @@ public class GateInfoDatabase  extends Observable  {
 	 */
 	  public void allocate(int gateNumber, int mCode){
 		  gates[gateNumber].allocate(mCode);
-		  setChanged();
-		  notifyObservers();
 		  }
 
 	/**
@@ -83,8 +81,7 @@ public class GateInfoDatabase  extends Observable  {
 	 */
 	  public void docked(int gateNumber){
 		  gates[gateNumber].docked();
-		  setChanged();
-		  notifyObservers();
+		  
 	  }
 
 	/**
@@ -92,8 +89,6 @@ public class GateInfoDatabase  extends Observable  {
 	 */
 	  public void departed(int gateNumber){
 		  gates[gateNumber].departed();
-		  setChanged();
-		  notifyObservers();
 	  }
 
 	}

@@ -76,4 +76,12 @@ public class Gate {
 	  status = FREE;
 	  }
   }
+  
+  @Override
+  public String toString()
+  {
+	  StringBuilder sb = new StringBuilder();
+	  sb.append(status);
+	  return sb.toString();
+  }
 }
