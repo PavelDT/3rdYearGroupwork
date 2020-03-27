@@ -35,9 +35,10 @@ public class Main {
 		new MaintenanceInspector(aircraftManagementDatabase);
 		new CleaningSupervisor(aircraftManagementDatabase);
 		new RefuellingSupervisor(aircraftManagementDatabase);
-		// todo this gate should come from somewhere and probably shouldn't be a param
-		int dummyGateNumber = 5;
-		new GateConsole(aircraftManagementDatabase, gateInfoDatabase, dummyGateNumber);
 		new RadarTransceiver(aircraftManagementDatabase);
+
+		for (int gateNumber = 0; gateNumber < GateInfoDatabase.maxGateNumber; gateNumber++) {
+			new GateConsole(aircraftManagementDatabase, gateInfoDatabase, gateNumber);
+		}
 	}
 }
