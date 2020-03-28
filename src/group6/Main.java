@@ -25,8 +25,8 @@ public class Main {
 
 		// Instantiate databases
 
-		AircraftManagementDatabase aircraftManagementDatabase = new AircraftManagementDatabase();
-		GateInfoDatabase gateInfoDatabase = new GateInfoDatabase();
+		AircraftManagementDatabase aircraftManagementDatabase = AircraftManagementDatabase.getInstance();
+		GateInfoDatabase gateInfoDatabase = GateInfoDatabase.getInstance();
 
        // Instantiate and show all interfaces as Frames
 

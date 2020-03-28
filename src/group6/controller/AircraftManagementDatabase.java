@@ -76,11 +76,20 @@ public class AircraftManagementDatabase extends Observable{
      */
     private static AircraftManagementDatabase instance;
 
-    public AircraftManagementDatabase() {
+    /**
+     * Private constructor to prevent instantiation outside of the getInstance function.
+     * This implements singleton.
+     */
+    private AircraftManagementDatabase() {
         managementRecords = new ManagementRecord[maxMRs];
     }
 
-    public static AircraftManagementDatabase getInstance(ManagementRecord[] managementRecords) {
+    /**
+     * Checks if singleton instance is instantiated. If not it instantiates it.
+     * This implements lazyness and makes sure the same object is used over and over.
+     * @return
+     */
+    public static AircraftManagementDatabase getInstance() {
         if (instance == null) {
             instance = new AircraftManagementDatabase();
             // for all observers observing the AircraftManagementDatabase

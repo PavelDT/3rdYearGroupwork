@@ -3,6 +3,7 @@ import javax.swing.*;
 
 import group6.controller.AircraftManagementDatabase;
 import group6.controller.GateInfoDatabase;
+import group6.util.UISettings;
 
 import java.awt.*;
 import java.util.Observable;
@@ -51,8 +52,8 @@ public class GOC extends JFrame implements Observer {
 		this.aircraftManagementDatabase = aircraftManagementDatabase;
 		this.gateInfoDatabase = gateInfoDatabase;
 		setTitle("GOC View");
-		setLocation(150, 150);
-		setSize(350, 150);
+		setLocation(UISettings.GOCPosition);
+		setSize(UISettings.VIEW_WIDTH, UISettings.VIEW_HEIGHT);
 		Container window = getContentPane();
 		window.setLayout(new FlowLayout());
 		String[] aircraftCodes = checkForAircraft();
@@ -63,6 +64,7 @@ public class GOC extends JFrame implements Observer {
 		aircraftScroll.setPreferredSize(new Dimension(350, 150));
 		aircraftManagementDatabase.addObserver(this);
 		gateInfoDatabase.addObserver(this);
+		setVisible(true);
 	}
 
 	public String[] checkForAircraft() {

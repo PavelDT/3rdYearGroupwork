@@ -36,8 +36,18 @@ public class GateInfoDatabase  extends Observable  {
 	   */
 	  
 	  public static int maxGateNumber = 2;
-	  
-	  public GateInfoDatabase() {
+
+	/**
+	 * Singleton implementation to restrict only one instance of this class.
+	 * using static initializer and lazy instantiation.
+	 */
+	private static GateInfoDatabase instance;
+
+	/**
+	 * Private constructor to prevent instantiation outside of the getInstance function.
+	 * This implements singleton.
+	 */
+	  private GateInfoDatabase() {
 		  gates = new Gate[maxGateNumber];
 		  
 		  for(int index = 0; index < maxGateNumber; index++) {
@@ -45,6 +55,20 @@ public class GateInfoDatabase  extends Observable  {
 		  }
 	  }
 
+	/**
+	 * Creates instance of the singleton object
+	 * Ensures it can only be instantiated once
+	 * @return The singleton instance of GateInfoDatabase
+	 */
+	public static GateInfoDatabase getInstance() {
+		if (instance == null) {
+			instance = new GateInfoDatabase();
+			// for all observers observing the AircraftManagementDatabase
+			instance.setChanged();
+			instance.notifyObservers();
+		}
+		return instance;
+	}
 
 	/**
 	 * Obtain and return the status of the given gate identified by the gateNumber parameter.
