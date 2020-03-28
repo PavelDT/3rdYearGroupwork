@@ -11,6 +11,7 @@ import javax.swing.border.EmptyBorder;
 
 import group6.controller.AircraftManagementDatabase;
 import group6.controller.GateInfoDatabase;
+import group6.model.ManagementRecord;
 import group6.view.CleaningSupervisor;
 import group6.view.GOC;
 import group6.view.GateConsole;

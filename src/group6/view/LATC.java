@@ -2,6 +2,7 @@ package group6.view;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -90,10 +91,10 @@ public class LATC extends JDialog implements Observer {
 	}
 
 	public String[] checkForAircraft() {
-		int[] MRs = aircraftManagementDatabase.getWithStatus(1);
-		String[] aircraftCodes = new String[MRs.length];
-		for (int i = 0; i < MRs.length; i++) {
-			aircraftCodes[i] = aircraftManagementDatabase.getFlightCode(MRs[i]);
+		List<Integer> MRs = aircraftManagementDatabase.getWithStatus(1);
+		String[] aircraftCodes = new String[MRs.size()];
+		for (int i = 0; i < MRs.size(); i++) {
+			aircraftCodes[i] = aircraftManagementDatabase.getFlightCode(MRs.get(i));
 		}
 		return aircraftCodes;
 	}

@@ -1,5 +1,7 @@
 package group6.controller;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 
 import group6.model.FlightDescriptor;
@@ -70,6 +72,10 @@ public class AircraftManagementDatabase extends Observable{
      */
     public int maxMRs = 10;
 
+    public void setManagementRecords(ManagementRecord[] mrs) {
+        this.managementRecords = mrs;
+    }
+
     /**
      * Singleton implementation to restrict only one instance of this class.
      * using static initializer and lazy instantiation.
@@ -133,11 +139,11 @@ public class AircraftManagementDatabase extends Observable{
      * Just the mCodes of those MRs with the given status supplied as a parameter.
      * Principally for call by the various interface screens.
      */
-    public int[] getWithStatus(int statusCode) {
-        int[] mCodesWithStatus = new int[maxMRs];
+    public List<Integer> getWithStatus(int statusCode) {
+        List<Integer> mCodesWithStatus =new ArrayList<>();
         for (int i = 0; i < managementRecords.length; i++) {
             if (managementRecords[i] != null && statusCode == managementRecords[i].getStatus()) {
-                mCodesWithStatus[i] = i;
+                mCodesWithStatus.add(i);
             }
         }
         return mCodesWithStatus;

@@ -161,6 +161,10 @@ public class ManagementRecord {
    */
   private String faultDescription;
 
+  public ManagementRecord(String flightCode) {
+    this.flightCode = flightCode;
+  }
+
 
 /**
   * Request to set the MR into a new status.

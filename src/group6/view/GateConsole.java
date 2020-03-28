@@ -5,6 +5,7 @@ import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -166,16 +167,16 @@ public class GateConsole extends JFrame implements Observer, ActionListener {
 
 	private void unloadFlight() {
 		// UI THIS
-		int[] mCodes = aircraftManagementDatabase.getWithStatus(7);
-		int mCode = mCodes[0];
+		List<Integer> mCodes = aircraftManagementDatabase.getWithStatus(7);
+		int mCode = mCodes.get(0);
 		aircraftManagementDatabase.setStatus(mCode, 8);
 	}
 
 	private void addPassengerToFlight() {
 		// UI THIS
 		PassengerDetails passengerName = new PassengerDetails(JOptionPane.showInputDialog("Passenger Name"));
-		int[] mCodes = aircraftManagementDatabase.getWithStatus(14);
-		int mCode = mCodes[0];
+		List<Integer> mCodes = aircraftManagementDatabase.getWithStatus(14);
+		int mCode = mCodes.get(0);
 		aircraftManagementDatabase.addPassenger(mCode, passengerName);
 
 	}
