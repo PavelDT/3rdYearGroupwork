@@ -14,16 +14,6 @@ import java.util.List;
  * @url element://model:project::SAAMS/design:view:::id1jkohcko4qme4cko4svww
  */
 public class PassengerList {
-    // /**
-    //  * The array of PassengerDetails objects.
-    //  * @byValue
-    //  * @clientCardinality 1
-    //  * @directed true
-    //  * @label contains
-    //  * @shapeType AggregationLink
-    //  * @supplierCardinality 0..*
-    //  */
-    // private PassengerDetails[] details = new PassengerDetails[10];
 
   /**
    * The list of PassengerDetails objects.

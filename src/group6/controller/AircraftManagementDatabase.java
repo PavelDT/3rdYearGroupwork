@@ -88,6 +88,11 @@ public class AircraftManagementDatabase extends Observable{
      */
     private AircraftManagementDatabase() {
         managementRecords = new ManagementRecord[maxMRs];
+        // initialise all 10 records to FREE so that they can be utilised
+        for(int i =0; i<managementRecords.length; i++) {
+            managementRecords[i] = new ManagementRecord();
+            managementRecords[i].setStatus(ManagementRecord.FREE);
+        }
     }
 
     /**
@@ -146,7 +151,10 @@ public class AircraftManagementDatabase extends Observable{
                 mCodesWithStatus.add(i);
             }
         }
-        return mCodesWithStatus;
+        // use java 8 streams to convert the list of Integer to an array of native ints
+        // this means the project requires java 8
+        // source: https://stackoverflow.com/a/23945015
+        return matchedStatusList.stream().mapToInt(i->i).toArray();
     }
 
     /**
@@ -158,10 +166,20 @@ public class AircraftManagementDatabase extends Observable{
         for(int i =0; i<managementRecords.length; i++) {
             if(managementRecords[i].getStatus() == ManagementRecord.FREE) {
                 managementRecords[i].radarDetect(fd);
+                // fight detectd by radar and details received
+                // set status to wanting to land, based on MR diagram
+                managementRecords[i].setStatus(ManagementRecord.WANTING_TO_LAND);
                 setChanged();
-                notifyObservers(instance);
+                notifyObservers();
+
+                // A free management record was found
+                // stop looping for efficiency.
+                break;
             }
         }
+
+        // todo -- do something if all 10 slots are full.
+        //         e.g. raise an alert in the radar
     }
 
     /**
