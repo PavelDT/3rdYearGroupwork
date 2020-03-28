@@ -5,6 +5,9 @@ import java.awt.EventQueue;
 import javax.swing.JDialog;
 
 import group6.controller.AircraftManagementDatabase;
+import group6.model.ManagementRecord;
+import group6.util.UISettings;
+
 import javax.swing.SpringLayout;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -15,6 +18,8 @@ import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.util.Observable;
+import java.util.Observer;
 import javax.swing.JTextArea;
 import javax.swing.JScrollPane;
 import javax.swing.JList;
@@ -38,7 +43,7 @@ import javax.swing.JOptionPane;
  * @url element://model:project::SAAMS/design:view:::id3oolzcko4qme4cko4sx40
  * @url element://model:project::SAAMS/design:view:::id15rnfcko4qme4cko4swib
  */
-public class RadarTransceiver extends JDialog implements ListSelectionListener {
+public class RadarTransceiver extends JDialog implements ListSelectionListener, Observer {
 
 	AircraftManagementDatabase aircraftManagementDatabase;
 	private JButton btnEnter;
@@ -51,7 +56,7 @@ public class RadarTransceiver extends JDialog implements ListSelectionListener {
 	public RadarTransceiver(AircraftManagementDatabase aircraftManagementDatabase) {
 		this.aircraftManagementDatabase = aircraftManagementDatabase;
 
-		setBounds(100, 100, 729, 452);
+		setBounds(UISettings.RadarTransceiverBound);
 		SpringLayout springLayout = new SpringLayout();
 		getContentPane().setLayout(springLayout);
 
@@ -122,7 +127,10 @@ public class RadarTransceiver extends JDialog implements ListSelectionListener {
 		//still working on list
 		//list = new JList(listModel);
 		scrollPane.setViewportView(list);
-		
+
+		// observer of the aircraft db
+		aircraftManagementDatabase.addObserver(this);
+
 		setVisible(true);
 
 	}
@@ -162,5 +170,15 @@ public class RadarTransceiver extends JDialog implements ListSelectionListener {
 	public void valueChanged(ListSelectionEvent e) {
 		
 		
+	}
+
+	@Override
+	public void update(Observable observable, Object o) {
+		// todo -- remove debug, this just shows what records are available after the notification
+		for (int i: aircraftManagementDatabase.getWithStatus(ManagementRecord.FREE)) {
+			System.out.print(i + ", ");
+			}
+		System.out.println();
+		System.out.println(aircraftManagementDatabase.getStatus(0));
 	}
 }
