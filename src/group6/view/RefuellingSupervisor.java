@@ -2,7 +2,6 @@ package group6.view;
 import javax.swing.*;
 
 import group6.controller.AircraftManagementDatabase;
-import group6.util.UISettings;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -41,8 +40,8 @@ public class RefuellingSupervisor extends JFrame implements ActionListener {
 		this.aircraftManagementDatabase = aircraftManagementDatabase;
 		
 		setTitle("Refuelling Supervisor");
-		setLocation(UISettings.RefuelingSupervisorPosition);
-		setSize(UISettings.VIEW_WIDTH, UISettings.VIEW_HEIGHT);
+//		setLocation(UISettings.RefuelingSupervisorPosition);
+//		setSize(UISettings.VIEW_WIDTH, UISettings.VIEW_HEIGHT);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		Container window = getContentPane();
 		window.setLayout(new FlowLayout());

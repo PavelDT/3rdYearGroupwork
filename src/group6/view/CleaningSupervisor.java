@@ -1,7 +1,7 @@
 package group6.view;
 
 import group6.controller.AircraftManagementDatabase;
-import group6.util.UISettings;
+
 
 import javax.swing.*;
 import java.awt.*;
@@ -39,8 +39,8 @@ public class CleaningSupervisor extends JFrame implements ActionListener, Observ
         this.aircraftManagementDatabase = aircraftManagementDatabase;
 
         setTitle("Cleaning Supervisor");
-        setLocation(UISettings.CleaningSupervisorPosition);
-        setSize(UISettings.VIEW_WIDTH, UISettings.VIEW_HEIGHT);
+//        setLocation(UISettings.CleaningSupervisorPosition);
+//        setSize(UISettings.VIEW_WIDTH, UISettings.VIEW_HEIGHT);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         Container window = getContentPane();
         window.setLayout(new FlowLayout());

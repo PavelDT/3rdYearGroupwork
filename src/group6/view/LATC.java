@@ -1,74 +1,92 @@
 package group6.view;
-import javax.swing.*;
+
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.util.Observable;
+import java.util.Observer;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableModel;
 
 import group6.controller.AircraftManagementDatabase;
 import group6.controller.GateInfoDatabase;
 import group6.util.UISettings;
+import javax.swing.SpringLayout;
+import javax.swing.JLabel;
+import java.awt.Font;
+import javax.swing.JTextArea;
+import javax.swing.JTable;
+import javax.swing.JScrollPane;
 
-import java.awt.*;
-import java.util.Observable;
-import java.util.Observer;
+public class LATC extends JDialog implements Observer {
 
-/**
- * An interface to SAAMS: A Ground Operations Controller Screen: Inputs events
- * from LATC, and displays aircraft and gate information.This class is a
- * controller for the GateInfoDatabase and the AircraftManagementDatabase:
- * sending them messages to change the gate or aircraft status information. This
- * class also registers as an observer of the GateInfoDatabase and the
- * AircraftManagementDatabase, and is notified whenever any change occurs in
- * those <<model>> elements. See written documentation.
- * 
- * @stereotype boundary/view/controller
- * @url element://model:project::SAAMS/design:node:::id2wdkkcko4qme4cko4svm2.node36
- * @url element://model:project::SAAMS/design:view:::id2wdkkcko4qme4cko4svm2
- * @url element://model:project::SAAMS/design:view:::id1un8dcko4qme4cko4sw27
- * @url element://model:project::SAAMS/design:view:::id1bl79cko4qme4cko4sw5j
- * @url element://model:project::SAAMS/design:view:::id15rnfcko4qme4cko4swib
- * @url element://model:project::SAAMS/design:node:::id15rnfcko4qme4cko4swib.node107
- */
-public class LATC extends JFrame implements Observer {
-	/**
-	 * The Ground Operations Controller Screen interface has access to the
-	 * GateInfoDatabase.
-	 * 
-	 * @clientCardinality 1
-	 * @supplierCardinality 1
-	 * @label accesses/observes
-	 * @directed
-	 */
+	private final JPanel contentPanel = new JPanel();
+
+	private JTable table;
 	private GateInfoDatabase gateInfoDatabase;
-
-	/**
-	 * The Ground Operations Controller Screen interface has access to the
-	 * AircraftManagementDatabase.
-	 * 
-	 * @clientCardinality 1
-	 * @supplierCardinality 1
-	 * @label accesses/observes
-	 * @directed
-	 */
 
 	private AircraftManagementDatabase aircraftManagementDatabase;
 
-	public LATC(AircraftManagementDatabase aircraftManagementDatabase, GateInfoDatabase gateInfoDatabase) {
+	/** The user-defined model of the basket */
+	private static DefaultTableModel model;
 
+	/**
+	 * Create the dialog.
+	 */
+	public LATC(AircraftManagementDatabase aircraftManagementDatabase, GateInfoDatabase gateInfoDatabase) {
 		this.aircraftManagementDatabase = aircraftManagementDatabase;
 		this.gateInfoDatabase = gateInfoDatabase;
-		setTitle("GOC View");
+
 		setLocation(UISettings.LATCPosition);
 		setSize(UISettings.VIEW_WIDTH, UISettings.VIEW_HEIGHT);
-		Container window = getContentPane();
-		window.setLayout(new FlowLayout());
-		String[] aircraftCodes = checkForAircraft();
-		JList<String> aircrafts = new JList<>(aircraftCodes);
-		aircrafts.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-		aircrafts.setLayoutOrientation(JList.VERTICAL_WRAP);
-		JScrollPane aircraftScroll = new JScrollPane(aircrafts);
-		aircraftScroll.setPreferredSize(new Dimension(350, 150));
-		aircraftManagementDatabase.addObserver(this);
-		gateInfoDatabase.addObserver(this);
-		setVisible(true);
+		getContentPane().setLayout(new BorderLayout());
+		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		getContentPane().add(contentPanel, BorderLayout.CENTER);
+		SpringLayout sl_contentPanel = new SpringLayout();
+		contentPanel.setLayout(sl_contentPanel);
+		
+		JLabel lblTitle = new JLabel("LATC");
+		sl_contentPanel.putConstraint(SpringLayout.NORTH, lblTitle, 10, SpringLayout.NORTH, contentPanel);
+		sl_contentPanel.putConstraint(SpringLayout.WEST, lblTitle, 197, SpringLayout.WEST, contentPanel);
+		lblTitle.setFont(new Font("Arial Black", Font.BOLD, 26));
+		contentPanel.add(lblTitle);
+		
+		JTextArea textArea = new JTextArea();
+		sl_contentPanel.putConstraint(SpringLayout.NORTH, textArea, 86, SpringLayout.NORTH, contentPanel);
+		sl_contentPanel.putConstraint(SpringLayout.WEST, textArea, 21, SpringLayout.WEST, contentPanel);
+		contentPanel.add(textArea);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		sl_contentPanel.putConstraint(SpringLayout.NORTH, scrollPane, 0, SpringLayout.NORTH, textArea);
+		sl_contentPanel.putConstraint(SpringLayout.WEST, scrollPane, 5, SpringLayout.EAST, textArea);
+		sl_contentPanel.putConstraint(SpringLayout.SOUTH, scrollPane, -71, SpringLayout.SOUTH, contentPanel);
+		sl_contentPanel.putConstraint(SpringLayout.EAST, scrollPane, 226, SpringLayout.WEST, contentPanel);
+		scrollPane.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		contentPanel.add(scrollPane);
+		
+		
+		model = new DefaultTableModel() {
 
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
+
+		table = new JTable(model);
+		table.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		table.getTableHeader().setReorderingAllowed(false);
+		model.addColumn("AIRCRAFT");
+		model.addColumn("STATUS");
+		table.setModel(model);
+
+		scrollPane.setViewportView(table);
+
+		setVisible(true);
 	}
 
 	public String[] checkForAircraft() {
