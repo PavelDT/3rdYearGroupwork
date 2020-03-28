@@ -161,6 +161,9 @@ public class ManagementRecord {
    */
   private String faultDescription;
 
+  public ManagementRecord() {
+  }
+
   public ManagementRecord(String flightCode) {
     this.flightCode = flightCode;
   }

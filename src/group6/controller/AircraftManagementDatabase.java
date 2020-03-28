@@ -151,10 +151,7 @@ public class AircraftManagementDatabase extends Observable{
                 mCodesWithStatus.add(i);
             }
         }
-        // use java 8 streams to convert the list of Integer to an array of native ints
-        // this means the project requires java 8
-        // source: https://stackoverflow.com/a/23945015
-        return matchedStatusList.stream().mapToInt(i->i).toArray();
+        return mCodesWithStatus;
     }
 
     /**
