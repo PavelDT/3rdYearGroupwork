@@ -1,8 +1,9 @@
-package group6.view;
+package group6.test;
 
 
 import group6.controller.AircraftManagementDatabase;
 import group6.model.ManagementRecord;
+import group6.view.CleaningSupervisor;
 
 //Test class for Cleaning supervisor screen
 class CleaningSupervisorTest {

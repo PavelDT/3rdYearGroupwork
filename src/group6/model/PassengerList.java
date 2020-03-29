@@ -40,4 +40,12 @@ public class PassengerList {
     // add passenger details to the list.
     this.details.add(details);
   }
+
+  /**
+   * Accessor for the passenger details as a list
+   * @return List<PassengerDetails> representing passengers' details
+   */
+  public List<PassengerDetails> getPassengerDetails() {
+    return details;
+  }
 }

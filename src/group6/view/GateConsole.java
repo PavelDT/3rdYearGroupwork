@@ -19,6 +19,7 @@ import javax.swing.JTextArea;
 import group6.model.PassengerDetails;
 import group6.controller.AircraftManagementDatabase;
 import group6.controller.GateInfoDatabase;
+import group6.util.UISettings;
 
 /**
  * An interface to SAAMS: Gate Control Console: Inputs events from gate staff,
@@ -89,8 +90,8 @@ public class GateConsole extends JFrame implements Observer, ActionListener {
 		this.gateNumber = gateNumber;
 
 		setTitle("Gate Console");
-//		setLocation(UISettings.GateConsolePosition);
-//		setSize(UISettings.VIEW_WIDTH, UISettings.VIEW_HEIGHT);
+		setLocation(UISettings.GateConsolePosition);
+		setSize(UISettings.VIEW_WIDTH, UISettings.VIEW_HEIGHT);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		Container window = getContentPane();
 		window.setLayout(new FlowLayout());
@@ -167,16 +168,16 @@ public class GateConsole extends JFrame implements Observer, ActionListener {
 
 	private void unloadFlight() {
 		// UI THIS
-		List<Integer> mCodes = aircraftManagementDatabase.getWithStatus(7);
-		int mCode = mCodes.get(0);
+		int[] mCodes = aircraftManagementDatabase.getWithStatus(7);
+		int mCode = mCodes[0];
 		aircraftManagementDatabase.setStatus(mCode, 8);
 	}
 
 	private void addPassengerToFlight() {
 		// UI THIS
 		PassengerDetails passengerName = new PassengerDetails(JOptionPane.showInputDialog("Passenger Name"));
-		List<Integer> mCodes = aircraftManagementDatabase.getWithStatus(14);
-		int mCode = mCodes.get(0);
+		int[] mCodes = aircraftManagementDatabase.getWithStatus(14);
+		int mCode = mCodes[0];
 		aircraftManagementDatabase.addPassenger(mCode, passengerName);
 
 	}

@@ -11,7 +11,10 @@ import javax.swing.border.EmptyBorder;
 
 import group6.controller.AircraftManagementDatabase;
 import group6.controller.GateInfoDatabase;
+import group6.model.FlightDescriptor;
 import group6.model.ManagementRecord;
+import group6.util.RNG;
+import group6.util.UISettings;
 import group6.view.CleaningSupervisor;
 import group6.view.GOC;
 import group6.view.GateConsole;
@@ -53,10 +56,8 @@ public class Main extends JDialog {
 	 */
 	public Main() {
 
-		AircraftManagementDatabase aircraftManagementDatabase = AircraftManagementDatabase.getInstance();
-		GateInfoDatabase gateInfoDatabase = GateInfoDatabase.getInstance();
 
-		setBounds(100, 100, 450, 300);
+		setBounds(UISettings.MainBound);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -73,7 +74,7 @@ public class Main extends JDialog {
 		btnStart.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
-				createInterfaces(aircraftManagementDatabase, gateInfoDatabase);
+				createInterfaces();
 			}
 
 		});
@@ -108,8 +109,10 @@ public class Main extends JDialog {
 
 	}
 
-	private void createInterfaces(AircraftManagementDatabase aircraftManagementDatabase,
-			GateInfoDatabase gateInfoDatabase) {
+	private void createInterfaces() {
+
+		AircraftManagementDatabase aircraftManagementDatabase = AircraftManagementDatabase.getInstance();
+		GateInfoDatabase gateInfoDatabase = GateInfoDatabase.getInstance();
 
 		new GOC(aircraftManagementDatabase, gateInfoDatabase);
 		new LATC(aircraftManagementDatabase, gateInfoDatabase);
@@ -117,11 +120,13 @@ public class Main extends JDialog {
 		new CleaningSupervisor(aircraftManagementDatabase);
 		new RefuellingSupervisor(aircraftManagementDatabase);
 		new RadarTransceiver(aircraftManagementDatabase);
-
 		for (int gateNumber = 0; gateNumber < GateInfoDatabase.maxGateNumber; gateNumber++) {
 			new GateConsole(aircraftManagementDatabase, gateInfoDatabase, gateNumber);
 		}
 
+
+		FlightDescriptor fd = RNG.generateFlightDescriptor();
+		aircraftManagementDatabase.radarDetect(fd);
 	}
 
 	private void handleExit() {

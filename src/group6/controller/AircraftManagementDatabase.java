@@ -144,14 +144,18 @@ public class AircraftManagementDatabase extends Observable{
      * Just the mCodes of those MRs with the given status supplied as a parameter.
      * Principally for call by the various interface screens.
      */
-    public List<Integer> getWithStatus(int statusCode) {
-        List<Integer> mCodesWithStatus =new ArrayList<>();
+    public int[] getWithStatus(int statusCode) {
+        List<Integer> matchedStatusList = new ArrayList<Integer>();
         for (int i = 0; i < managementRecords.length; i++) {
-            if (managementRecords[i] != null && statusCode == managementRecords[i].getStatus()) {
-                mCodesWithStatus.add(i);
+            if (statusCode == managementRecords[i].getStatus()) {
+                matchedStatusList.add(i);
             }
         }
-        return mCodesWithStatus;
+
+        // use java 8 streams to convert the list of Integer to an array of native ints
+        // this means the project requires java 8
+        // source: https://stackoverflow.com/a/23945015
+        return matchedStatusList.stream().mapToInt(item->item).toArray();
     }
 
     /**
@@ -160,12 +164,14 @@ public class AircraftManagementDatabase extends Observable{
      * This operation finds a currently FREE MR and forwards the radarDetect request to it for recording.
      */
     public void radarDetect(FlightDescriptor fd) {
+
         for(int i =0; i<managementRecords.length; i++) {
             if(managementRecords[i].getStatus() == ManagementRecord.FREE) {
-                managementRecords[i].radarDetect(fd);
-                // fight detectd by radar and details received
-                // set status to wanting to land, based on MR diagram
+                // update status
                 managementRecords[i].setStatus(ManagementRecord.WANTING_TO_LAND);
+                // carry out radar detection
+                managementRecords[i].radarDetect(fd);
+
                 setChanged();
                 notifyObservers();
 

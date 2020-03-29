@@ -6,6 +6,7 @@ package group6.view;
 
 import group6.controller.AircraftManagementDatabase;
 import group6.model.ManagementRecord;
+import group6.util.UISettings;
 
 import javax.swing.*;
 import java.awt.*;
@@ -39,18 +40,18 @@ public class CleaningSupervisor extends JFrame implements Observer {
     private AircraftManagementDatabase aircraftManagementDatabase;
 
     public CleaningSupervisor(AircraftManagementDatabase aircraftManagementDatabase) {
-        JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         this.aircraftManagementDatabase = aircraftManagementDatabase;
         setTitle("Cleaning Supervisor View");
-        setLocation(150, 150);
-        setSize(350, 150);
+        setLocation(UISettings.CleaningSupervisorPosition);
+        setSize(UISettings.VIEW_WIDTH, UISettings.VIEW_HEIGHT);
         Container window = getContentPane();
         window.setLayout(new FlowLayout());
-        List<Integer> aWaitClean = this.aircraftManagementDatabase.getWithStatus(ManagementRecord.OK_AWAIT_CLEAN);
+        int[] aWaitClean = this.aircraftManagementDatabase.getWithStatus(ManagementRecord.OK_AWAIT_CLEAN);
 
-        String[] aircraftCodes = new String[aWaitClean.size()];
+        String[] aircraftCodes = new String[aWaitClean.length];
         addAircraftCodes(0, this.aircraftManagementDatabase, aWaitClean, aircraftCodes);
 
         Vector<Vector> data = new Vector<>();
@@ -65,15 +66,14 @@ public class CleaningSupervisor extends JFrame implements Observer {
         JTable table = new JTable(data, columnNames);
 
         JScrollPane aircraftScroll = new JScrollPane(table);
-        frame.add(aircraftScroll, BorderLayout.CENTER);
-        frame.setSize(500, 500);
-        frame.setVisible(true);
+        add(aircraftScroll, BorderLayout.CENTER);
+        setVisible(true);
         aircraftScroll.setPreferredSize(new Dimension(350, 150));
     }
 
-    private void addAircraftCodes(int index, AircraftManagementDatabase aircraftManagementDatabase, List<Integer> mrs, String[] aircraftCodes) {
-        for (int i = index; i < mrs.size(); i++) {
-            aircraftCodes[i] = aircraftManagementDatabase.getFlightCode(mrs.get(i));
+    private void addAircraftCodes(int index, AircraftManagementDatabase aircraftManagementDatabase, int[] mrs, String[] aircraftCodes) {
+        for (int i = index; i < mrs.length; i++) {
+            aircraftCodes[i] = aircraftManagementDatabase.getFlightCode(mrs[i]);
         }
     }
 

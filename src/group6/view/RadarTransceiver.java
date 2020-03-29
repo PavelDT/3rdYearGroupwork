@@ -5,7 +5,10 @@ import java.awt.EventQueue;
 import javax.swing.JDialog;
 
 import group6.controller.AircraftManagementDatabase;
+import group6.model.Itinerary;
 import group6.model.ManagementRecord;
+import group6.model.PassengerDetails;
+import group6.model.PassengerList;
 import group6.util.UISettings;
 
 import javax.swing.SpringLayout;
@@ -51,7 +54,7 @@ public class RadarTransceiver extends JDialog implements ListSelectionListener, 
 	private JButton btnPassengers;
 	private JTextArea textArea;
 	private JList list;
-	private DefaultListModel <String>listModel;
+	private DefaultListModel<String> listModel;
 
 	public RadarTransceiver(AircraftManagementDatabase aircraftManagementDatabase) {
 		this.aircraftManagementDatabase = aircraftManagementDatabase;
@@ -125,9 +128,9 @@ public class RadarTransceiver extends JDialog implements ListSelectionListener, 
 		getContentPane().add(scrollPane);
 
 		//still working on list
-		//list = new JList(listModel);
+		listModel = new DefaultListModel<String>();
+		list = new JList(listModel);
 		scrollPane.setViewportView(list);
-
 		// observer of the aircraft db
 		aircraftManagementDatabase.addObserver(this);
 
@@ -155,14 +158,21 @@ public class RadarTransceiver extends JDialog implements ListSelectionListener, 
 	// TO JTEXT AREA
 	private void viewPassengerList() {
 
-//		if(list.isSelectionEmpty())
-//		{
-//			JOptionPane.showMessageDialog(null, "Please select a flight!");
-//		}
-//		else {
-//			String s = listModel.
-//			//textArea.append();
-//		}
+
+		if(list.isSelectionEmpty())
+		{
+			JOptionPane.showMessageDialog(null, "Please select a flight!");
+		}
+		else {
+			// remove details from previous flights
+			textArea.setText("");
+
+			PassengerList passengerList = aircraftManagementDatabase.getPassengerList(list.getSelectedIndex());
+			// for all the passengers on the flight add them to the text field as an individual line
+			for (PassengerDetails passenger : passengerList.getPassengerDetails()) {
+				textArea.append(passenger.getName() + "\n");
+			}
+		}
 		
 	}
 
@@ -174,11 +184,24 @@ public class RadarTransceiver extends JDialog implements ListSelectionListener, 
 
 	@Override
 	public void update(Observable observable, Object o) {
-		// todo -- remove debug, this just shows what records are available after the notification
-		for (int i: aircraftManagementDatabase.getWithStatus(ManagementRecord.FREE)) {
-			System.out.print(i + ", ");
-			}
-		System.out.println();
-		System.out.println(aircraftManagementDatabase.getStatus(0));
+		// reset the flights wanting to land list
+		listModel.removeAllElements();
+
+		// when the observer (this UI) is updated
+		// update the UI to display all flights wanting to land.
+		for (int i : aircraftManagementDatabase.getWithStatus(ManagementRecord.WANTING_TO_LAND)) {
+
+			Itinerary itinerary = aircraftManagementDatabase.getItinerary(i);
+
+			String flightDetails = aircraftManagementDatabase.getFlightCode(i) + " | " +
+					               " F: " + itinerary.getFrom() +
+					               " T: " + itinerary.getTo() +
+					               " N: " + itinerary.getNext();
+
+			// add by being explicit on the index, allows us to use the MANAGEMENT RECORD index
+			// for the list model index too
+			listModel.add(i, flightDetails);
+
+		}
 	}
 }

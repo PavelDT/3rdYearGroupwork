@@ -43,9 +43,9 @@ public class PublicInfo extends JFrame implements Observer {
         Container window = getContentPane();
         window.setLayout(new FlowLayout());
 
-        List<Integer> waitingToLand = this.aircraftManagementDatabase.getWithStatus(ManagementRecord.WANTING_TO_LAND);
-        List<Integer>groundClearanceGranted = this.aircraftManagementDatabase.getWithStatus(ManagementRecord.GROUND_CLEARANCE_GRANTED);
-        List<Integer> landing = this.aircraftManagementDatabase.getWithStatus(ManagementRecord.LANDING);
+        int[] waitingToLand = this.aircraftManagementDatabase.getWithStatus(ManagementRecord.WANTING_TO_LAND);
+        int[] groundClearanceGranted = this.aircraftManagementDatabase.getWithStatus(ManagementRecord.GROUND_CLEARANCE_GRANTED);
+        int[]  landing = this.aircraftManagementDatabase.getWithStatus(ManagementRecord.LANDING);
 
         List<String> aircraftCodes = new ArrayList<>();
         addAircraftCodes(0, this.aircraftManagementDatabase, waitingToLand, aircraftCodes);
@@ -71,9 +71,9 @@ public class PublicInfo extends JFrame implements Observer {
         aircraftScroll.setPreferredSize(new Dimension(350, 150));
     }
 
-    private void addAircraftCodes(int index, AircraftManagementDatabase aircraftManagementDatabase, List<Integer> mrs, List<String> aircraftCodes) {
-        for (int i = index, j = 0; j < mrs.size(); i++, j++) {
-            aircraftCodes.add(aircraftManagementDatabase.getFlightCode(mrs.get(j)));
+    private void addAircraftCodes(int index, AircraftManagementDatabase aircraftManagementDatabase, int[]  mrs, List<String> aircraftCodes) {
+        for (int i = index, j = 0; j < mrs.length; i++, j++) {
+            aircraftCodes.add(aircraftManagementDatabase.getFlightCode(mrs[j]));
         }
     }
 

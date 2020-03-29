@@ -91,10 +91,10 @@ public class LATC extends JDialog implements Observer {
 	}
 
 	public String[] checkForAircraft() {
-		List<Integer> MRs = aircraftManagementDatabase.getWithStatus(1);
-		String[] aircraftCodes = new String[MRs.size()];
-		for (int i = 0; i < MRs.size(); i++) {
-			aircraftCodes[i] = aircraftManagementDatabase.getFlightCode(MRs.get(i));
+		int[] MRs = aircraftManagementDatabase.getWithStatus(1);
+		String[] aircraftCodes = new String[MRs.length];
+		for (int i = 0; i < MRs.length; i++) {
+			aircraftCodes[i] = aircraftManagementDatabase.getFlightCode(MRs[i]);
 		}
 		return aircraftCodes;
 	}
