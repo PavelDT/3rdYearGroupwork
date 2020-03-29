@@ -2,7 +2,6 @@ package group6.view;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -34,6 +33,7 @@ public class LATC extends JDialog implements Observer {
 
 	/** The user-defined model of the basket */
 	private static DefaultTableModel model;
+	private JScrollPane scrollPane;
 
 	/**
 	 * Create the dialog.
@@ -47,6 +47,7 @@ public class LATC extends JDialog implements Observer {
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
+		
 		SpringLayout sl_contentPanel = new SpringLayout();
 		contentPanel.setLayout(sl_contentPanel);
 		
@@ -56,16 +57,11 @@ public class LATC extends JDialog implements Observer {
 		lblTitle.setFont(new Font("Arial Black", Font.BOLD, 26));
 		contentPanel.add(lblTitle);
 		
-		JTextArea textArea = new JTextArea();
-		sl_contentPanel.putConstraint(SpringLayout.NORTH, textArea, 86, SpringLayout.NORTH, contentPanel);
-		sl_contentPanel.putConstraint(SpringLayout.WEST, textArea, 21, SpringLayout.WEST, contentPanel);
-		contentPanel.add(textArea);
-		
-		JScrollPane scrollPane = new JScrollPane();
-		sl_contentPanel.putConstraint(SpringLayout.NORTH, scrollPane, 0, SpringLayout.NORTH, textArea);
-		sl_contentPanel.putConstraint(SpringLayout.WEST, scrollPane, 5, SpringLayout.EAST, textArea);
+		scrollPane = new JScrollPane();
+		sl_contentPanel.putConstraint(SpringLayout.NORTH, scrollPane, 39, SpringLayout.SOUTH, lblTitle);
+		sl_contentPanel.putConstraint(SpringLayout.WEST, scrollPane, 31, SpringLayout.WEST, contentPanel);
 		sl_contentPanel.putConstraint(SpringLayout.SOUTH, scrollPane, -71, SpringLayout.SOUTH, contentPanel);
-		sl_contentPanel.putConstraint(SpringLayout.EAST, scrollPane, 226, SpringLayout.WEST, contentPanel);
+		sl_contentPanel.putConstraint(SpringLayout.EAST, scrollPane, -248, SpringLayout.EAST, contentPanel);
 		scrollPane.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		contentPanel.add(scrollPane);
 		

@@ -14,6 +14,16 @@ import java.util.List;
  * @url element://model:project::SAAMS/design:view:::id1jkohcko4qme4cko4svww
  */
 public class PassengerList {
+    // /**
+    //  * The array of PassengerDetails objects.
+    //  * @byValue
+    //  * @clientCardinality 1
+    //  * @directed true
+    //  * @label contains
+    //  * @shapeType AggregationLink
+    //  * @supplierCardinality 0..*
+    //  */
+    // private PassengerDetails[] details = new PassengerDetails[10];
 
   /**
    * The list of PassengerDetails objects.
@@ -40,12 +50,9 @@ public class PassengerList {
     // add passenger details to the list.
     this.details.add(details);
   }
-
-  /**
-   * Accessor for the passenger details as a list
-   * @return List<PassengerDetails> representing passengers' details
-   */
-  public List<PassengerDetails> getPassengerDetails() {
-    return details;
+  
+  public List<PassengerDetails> getPassengerList()
+  {
+	  return details;
   }
 }
