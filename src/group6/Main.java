@@ -124,9 +124,11 @@ public class Main extends JDialog {
 			new GateConsole(aircraftManagementDatabase, gateInfoDatabase, gateNumber);
 		}
 
-
-		FlightDescriptor fd = RNG.generateFlightDescriptor();
-		aircraftManagementDatabase.radarDetect(fd);
+		// generate 4 random flights
+		aircraftManagementDatabase.radarDetect(RNG.generateFlightDescriptor());
+		aircraftManagementDatabase.radarDetect(RNG.generateFlightDescriptor());
+		aircraftManagementDatabase.radarDetect(RNG.generateFlightDescriptor());
+		aircraftManagementDatabase.radarDetect(RNG.generateFlightDescriptor());
 	}
 
 	private void handleExit() {

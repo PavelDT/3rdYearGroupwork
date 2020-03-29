@@ -62,8 +62,10 @@ public class RNG {
         String[] names = new String[]{"Martha", "Timmy", "The b0$$", "Jack", "Lilly"};
         PassengerList passengerList = new PassengerList();
 
-        // generate between 1 and 20 passengers
-        for (int i = 0; i < rng.nextInt(20 + 1); i++) {
+        // generate between 5 and 20 passengers
+        int bound = rng.nextInt(16) + 5;
+        System.out.println(bound);
+        for (int i = 0; i < bound; i++) {
             // randomly pick the name from the list above
             passengerList.addPassenger(new PassengerDetails(names[rng.nextInt(5)]));
         }
