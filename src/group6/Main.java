@@ -125,10 +125,10 @@ public class Main extends JDialog {
 		}
 
 		// generate 4 random flights
-		aircraftManagementDatabase.radarDetect(RNG.generateFlightDescriptor());
-		aircraftManagementDatabase.radarDetect(RNG.generateFlightDescriptor());
-		aircraftManagementDatabase.radarDetect(RNG.generateFlightDescriptor());
-		aircraftManagementDatabase.radarDetect(RNG.generateFlightDescriptor());
+//		aircraftManagementDatabase.radarDetect(RNG.generateFlightDescriptor());
+//		aircraftManagementDatabase.radarDetect(RNG.generateFlightDescriptor());
+//		aircraftManagementDatabase.radarDetect(RNG.generateFlightDescriptor());
+//		aircraftManagementDatabase.radarDetect(RNG.generateFlightDescriptor());
 	}
 
 	private void handleExit() {

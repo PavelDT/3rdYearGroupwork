@@ -64,7 +64,6 @@ public class RadarTransceiver extends JDialog implements Observer {
 	private JButton button_2;
 	private JTextArea textArea;
 	private JScrollPane scrollPane;
-	FlightDescriptor fd;
 	Random random = new Random();
 
 	public RadarTransceiver(AircraftManagementDatabase aircraftManagementDatabase) {
@@ -168,10 +167,10 @@ public class RadarTransceiver extends JDialog implements Observer {
 	 */
 	private void enterAirspace() {
 
-		 fd = RNG.generateFlightDescriptor();
+		// FlightDescriptor fd = RNG.generateFlightDescriptor();
 
-		
-		aircraftManagementDatabase.radarDetect(fd);
+		aircraftManagementDatabase.radarDetect(RNG.generateFlightDescriptor());
+		// aircraftManagementDatabase.radarDetect(fd);
 
 	}
 
@@ -211,23 +210,26 @@ public class RadarTransceiver extends JDialog implements Observer {
 	@Override
 	public void update(Observable observable, Object o) {
 		// reset the flights wanting to land list
-		// model.setRowCount(0);
+		model.setRowCount(0);
 
 		// when the observer (this UI) is updated
 		// update the UI to display all flights wanting to land.
 		for (int i : aircraftManagementDatabase.getWithStatus(ManagementRecord.WANTING_TO_LAND)) {
-			
+
+			String flightCode = aircraftManagementDatabase.getFlightCode(i);
 			Itinerary itinerary = aircraftManagementDatabase.getItinerary(i);
-			
+			PassengerList passengerList = aircraftManagementDatabase.getPassengerList(i);
+
+			FlightDescriptor fd = new FlightDescriptor(flightCode, itinerary, passengerList);
+
 			model.addRow(new Object[] { fd.getFlightCode(), "Wanting to Land" });
 
-//			String flightDetails = aircraftManagementDatabase.getFlightCode(i) + " | " + " F: " + itinerary.getFrom()
-//					+ " T: " + itinerary.getTo() + " N: " + itinerary.getNext();
+//	            String flightDetails = aircraftManagementDatabase.getFlightCode(i) + " | " + " F: " + itinerary.getFrom()
+//	                    + " T: " + itinerary.getTo() + " N: " + itinerary.getNext();
 
 			// add by being explicit on the index, allows us to use the MANAGEMENT RECORD
 			// index
 			// for the list model index too
-
 
 		}
 	}
