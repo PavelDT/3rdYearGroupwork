@@ -5,6 +5,7 @@ import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -18,6 +19,7 @@ import javax.swing.JTextArea;
 import group6.model.PassengerDetails;
 import group6.controller.AircraftManagementDatabase;
 import group6.controller.GateInfoDatabase;
+import group6.util.UISettings;
 
 /**
  * An interface to SAAMS: Gate Control Console: Inputs events from gate staff,
@@ -88,8 +90,8 @@ public class GateConsole extends JFrame implements Observer, ActionListener {
 		this.gateNumber = gateNumber;
 
 		setTitle("Gate Console");
-//		setLocation(UISettings.GateConsolePosition);
-//		setSize(UISettings.VIEW_WIDTH, UISettings.VIEW_HEIGHT);
+		setLocation(UISettings.GateConsolePosition);
+		setSize(UISettings.VIEW_WIDTH, UISettings.VIEW_HEIGHT);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		Container window = getContentPane();
 		window.setLayout(new FlowLayout());

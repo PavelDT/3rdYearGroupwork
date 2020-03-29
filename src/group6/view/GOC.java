@@ -2,6 +2,7 @@ package group6.view;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 

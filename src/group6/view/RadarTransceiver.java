@@ -218,8 +218,8 @@ public class RadarTransceiver extends JDialog implements Observer {
 			
 			Itinerary itinerary = aircraftManagementDatabase.getItinerary(i);
 
-//			String flightDetails = aircraftManagementDatabase.getFlightCode(i) + " | " + " F: " + itinerary.getFrom()
-//					+ " T: " + itinerary.getTo() + " N: " + itinerary.getNext();
+			String flightDetails = aircraftManagementDatabase.getFlightCode(i) + " | " + " F: " + itinerary.getFrom()
+					+ " T: " + itinerary.getTo() + " N: " + itinerary.getNext();
 
 			// add by being explicit on the index, allows us to use the MANAGEMENT RECORD
 			// index

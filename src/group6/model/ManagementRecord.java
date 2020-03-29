@@ -161,6 +161,13 @@ public class ManagementRecord {
    */
   private String faultDescription;
 
+  public ManagementRecord() {
+  }
+
+  public ManagementRecord(String flightCode) {
+    this.flightCode = flightCode;
+  }
+
 
 /**
   * Request to set the MR into a new status.
@@ -195,12 +202,14 @@ public class ManagementRecord {
   * Status must be FREE now, and becomes either IN_TRANSIT or WANTING_TO_LAND depending on the details in the flight descriptor.
   * @preconditions Status is FREE*/
   public void radarDetect(FlightDescriptor fd){
-    if (status != FREE) {
-      System.out.println("Invalid status: " + status);
-      return;
-    }
+    // fight detectd by radar and details received
+    // set status to wanting to land, based on MR diagram
 
-    // todo - status = either IN_TRANSIT || WANTING_TO_LAND depending on the FlightDescriptor details
+    itinerary = fd.getItinerary();
+    passengerList = fd.getPassengerList();
+    flightCode = fd.getFlightCode();
+
+    // todo - IN_TRANSIT
 
   }
 
