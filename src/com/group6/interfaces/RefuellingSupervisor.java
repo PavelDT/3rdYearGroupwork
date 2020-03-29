@@ -1,7 +1,8 @@
-package com.group6.interfaces;
+package group6.view;
 import javax.swing.*;
 
-import com.group6.database.AircraftManagementDatabase;
+import group6.controller.AircraftManagementDatabase;
+import group6.util.UISettings;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -32,42 +33,38 @@ public class RefuellingSupervisor extends JFrame implements ActionListener {
 	 * @directed
 	 */
 
-	private JButton theStatus;
-	private JButton update;
-	private JButton exit;
+	private JButton refuellingWait;
+	private JButton refuellingComplete;
 
-	public RefuellingSupervisor(AircraftManagementDatabase aircraftManagementDatabase, String title, int locationX, int locationY) {
+	public RefuellingSupervisor(AircraftManagementDatabase aircraftManagementDatabase) {
 		this.aircraftManagementDatabase = aircraftManagementDatabase;
 		
-		setTitle("Controller"); 
-		setLocation(locationX, locationY);
-		setSize(450, 150);
-		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		setTitle("Refuelling Supervisor");
+		setLocation(UISettings.RefuelingSupervisorPosition);
+		setSize(UISettings.VIEW_WIDTH, UISettings.VIEW_HEIGHT);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		Container window = getContentPane();
 		window.setLayout(new FlowLayout());
 		
-		// status button
-		update = new JButton("Status");
-		window.add(update);
-		update.addActionListener(this);
+	        refuellingWait = new JButton("Await Refuelling");
+	        window.add(refuellingWait);
+	        refuellingWait.addActionListener(this);
 		
-		// update button
-		theStatus = new JButton("Update");
-		window.add(update);
-		theStatus.addActionListener(this);
+	        refuellingComplete = new JButton("Done Refuelling");
+	        window.add(refuellingComplete);
+	        refuellingComplete.addActionListener(this);
 		
-		// quit button
-		exit = new JButton("Quit");
-		window.add(exit);
-		exit.addActionListener(this);
-		setVisible(true);
 	}
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == theStatus)
-			if (e.getSource() == update)
-				if (e.getSource() == exit)
-					System.exit(0);
-	}
+  @Override
+  public void actionPerformed(ActionEvent e) {
+      if (e.getSource() == refuellingWait) {
+        managementRecord.getStatus();
+        managementRecord.getFlightCode();
+        display.setText(ManagementRecord.getStatus());
+        display.setText(ManagementRecord.getFlightCode());
+      }
+       else if (e.getSource() == refuellingComplete) {
+       }
+  }
 }
