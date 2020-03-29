@@ -1,40 +1,43 @@
 package group6.view;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableModel;
 
 import group6.controller.AircraftManagementDatabase;
 import group6.controller.GateInfoDatabase;
+import group6.model.Gate;
+import group6.model.ManagementRecord;
 import group6.util.UISettings;
 
-import javax.swing.SpringLayout;
-import javax.swing.JLabel;
-import java.awt.Font;
+public class GOC extends JDialog implements Observer {
 
-public class GOC extends JDialog implements Observer{
-
-	private final JPanel contentPanel = new JPanel();
-
-	private GateInfoDatabase gateInfoDatabase;
 	/**
 	 * The Ground Operations Controller Screen interface has access to the
 	 * AircraftManagementDatabase.
-	 * 
+	 *
 	 * @clientCardinality 1
 	 * @supplierCardinality 1
 	 * @label accesses/observes
 	 * @directed
 	 */
 	private AircraftManagementDatabase aircraftManagementDatabase;
-	private JLabel lblTitle;
+	private GateInfoDatabase gateInfoDatabase;
+
+	// table for the flights and their status
+	private JTable table;
+	// for the available gates
+	private JComboBox<Integer> gatesComboBox;
+	// model of the flights list
+	private DefaultTableModel model;
 
 	/**
 	 * An interface to SAAMS: A Ground Operations Controller Screen: Inputs events
@@ -44,7 +47,7 @@ public class GOC extends JDialog implements Observer{
 	 * class also registers as an observer of the GateInfoDatabase and the
 	 * AircraftManagementDatabase, and is notified whenever any change occurs in
 	 * those <<model>> elements. See written documentation.
-	 * 
+	 *
 	 * @stereotype boundary/view/controller
 	 * @url element://model:project::SAAMS/design:node:::id2wdkkcko4qme4cko4svm2.node36
 	 * @url element://model:project::SAAMS/design:view:::id2wdkkcko4qme4cko4svm2
@@ -54,53 +57,175 @@ public class GOC extends JDialog implements Observer{
 	 * @url element://model:project::SAAMS/design:node:::id15rnfcko4qme4cko4swib.node107
 	 */
 	public GOC(AircraftManagementDatabase aircraftManagementDatabase, GateInfoDatabase gateInfoDatabase) {
-		
+
 		this.aircraftManagementDatabase = aircraftManagementDatabase;
 		this.gateInfoDatabase = gateInfoDatabase;
-		
+
 		setLocation(UISettings.GOCPosition);
 		setSize(UISettings.VIEW_WIDTH, UISettings.VIEW_HEIGHT);
-		getContentPane().setLayout(new BorderLayout());
-		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-		getContentPane().add(contentPanel, BorderLayout.CENTER);
-		SpringLayout sl_contentPanel = new SpringLayout();
-		contentPanel.setLayout(sl_contentPanel);
-		
-		lblTitle = new JLabel("GOC");
-		lblTitle.setFont(new Font("Arial Black", Font.BOLD, 26));
-		sl_contentPanel.putConstraint(SpringLayout.NORTH, lblTitle, 10, SpringLayout.NORTH, contentPanel);
-		sl_contentPanel.putConstraint(SpringLayout.WEST, lblTitle, 170, SpringLayout.WEST, contentPanel);
-		contentPanel.add(lblTitle);
-		
+
+		setTitle("GOC");
+
+		model = new DefaultTableModel() {
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
+
+		table = new JTable(model);
+		table.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		table.getTableHeader().setReorderingAllowed(false);
+		model.addColumn("AIRCRAFT");
+		model.addColumn("STATUS");
+		model.addColumn("GATE");
+		table.setModel(model);
+
+
+		JPanel row1 = new JPanel();
+		row1.setLayout(new BorderLayout());
+		JScrollPane tableScroll = new JScrollPane(table);
+		row1.add(tableScroll);
+		row1.setBorder(new EmptyBorder(10, 10, 10, 10));
+
+
+		// for allowing a flight to land
+		JPanel row2 = new JPanel();
+		row2.setLayout(new FlowLayout());
+		Button grantLandingPermissionBtn = new Button("Grant Ground Clearance");
+		grantLandingPermissionBtn.setSize(200, 50);
+		grantLandingPermissionBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				grantLandingPermission();
+			}
+		});
+		row2.add(grantLandingPermissionBtn);
+
+		// For assigning a gate to a flight
+		JPanel row3 = new JPanel();
+		row3.setLayout(new FlowLayout());
+		// gate selection box
+		gatesComboBox = new JComboBox<Integer>();
+		gatesComboBox.addItem(1);
+		gatesComboBox.addItem(2);
+		gatesComboBox.addItem(3);
+		// button for assigning gate
+		Button assignGateBtn = new Button("Assign Gate");
+		assignGateBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				assignGate();
+			}
+		});
+		assignGateBtn.setSize(200, 50);
+
+		Container contentPane = getContentPane();
+		contentPane.setLayout(new BorderLayout());
+
+		// group the combo box and assignGate button
+		row3.add(assignGateBtn);
+		row3.add(gatesComboBox);
+
+		// add top level panel for all components
+		JPanel p = new JPanel();
+		p.add(row1);
+		p.add(row2);
+		p.add(row3);
+		BoxLayout boxLayout = new BoxLayout(p, BoxLayout.PAGE_AXIS);
+		p.setLayout(boxLayout);
+
+		contentPane.add(p);
+
+		// ensure we observe the singleton
+		aircraftManagementDatabase.addObserver(this);
+		gateInfoDatabase.addObserver(this);
+
 		setVisible(true);
 	}
-	
-	public String[] checkForAircraft() {
-		int[] MRs = aircraftManagementDatabase.getWithStatus(1);
-		String[] aircraftCodes = new String[MRs.length];
-		for (int i = 0; i < MRs.length; i++) {
-			aircraftCodes[i] = aircraftManagementDatabase.getFlightCode(MRs[i]);
+
+	/**
+	 * Grants permission for a flight to land
+	 */
+	public void grantLandingPermission() {
+
+		if (table.getSelectionModel().isSelectionEmpty() == true) {
+			JOptionPane.showMessageDialog(null, "Please select a flight!");
+			// prevent execution.
+			return;
 		}
-		return aircraftCodes;
+
+		int selectedIndex = table.getSelectedRow();
+		// makse sure the flight's status is WAITING_TO_LAND
+		// we're checking the 2nd column, [0 index, 1 index (2nd col), 2 index ]
+		if ((int)model.getValueAt(selectedIndex, 1) != ManagementRecord.WANTING_TO_LAND) {
+			JOptionPane.showMessageDialog(null, "Flight isn't wanting to land!");
+			// prevent execution.
+			return;
+		} else {
+			// todo -- this is the IN_TRANSIT scenario, set the status and wait for the flight
+			//         to be lost form the radar.
+		}
+
+		// grant permission for landing and update status
+		aircraftManagementDatabase.setStatus(selectedIndex, ManagementRecord.GROUND_CLEARANCE_GRANTED);
+	}
+
+	public void assignGate() {
+		if (table.getSelectionModel().isSelectionEmpty() == true) {
+			JOptionPane.showMessageDialog(null, "Please select a flight!");
+			// prevent execution.
+			return;
+		}
+		int selectedIndex = table.getSelectedRow();
+
+		if ((int)model.getValueAt(selectedIndex, 1) != ManagementRecord.LANDED) {
+			String msg = "Flight hasn't landed!\nCan't assign gate until flight has landed.";
+			JOptionPane.showMessageDialog(null, msg);
+			// prevent execution.
+			return;
+		}
+
+
+		// todo -- do we need special rules for gate re-assignment?
+		// if the flight already has a gate assigned to it, set that gate's status to free
+		Object currentGate = model.getValueAt(selectedIndex, 2);
+		if (currentGate != null) {
+			gateInfoDatabase.reassigned((int)currentGate);
+		}
+
+		int[] gateStats = gateInfoDatabase.getStatuses();
+
+		int gateNumber = gatesComboBox.getSelectedIndex();
+		if (gateStats[gateNumber] == Gate.FREE) {
+			// use this gate
+			gateInfoDatabase.allocate(gateNumber, selectedIndex);
+			model.setValueAt(gateNumber, selectedIndex, 2);
+		} else {
+			String msg = "Gate [" + gateNumber + "] isn't available, please chose a different gate!";
+			JOptionPane.showMessageDialog(null, msg);
+		}
 	}
 
 	@Override
 	public void update(Observable observable, Object o) {
-		AircraftManagementDatabase aircraftDatabase = null;
-		GateInfoDatabase gateDatabase = null;
-		try {
-			aircraftDatabase = (AircraftManagementDatabase) o;
-		} catch (ClassCastException e) {
-			try {
-				gateDatabase = (GateInfoDatabase) o;
-			} catch (ClassCastException f) {
-				System.out.println(f.getMessage());
+		model.setRowCount(0);
+
+		// loop over every management record
+		int maxRecords = aircraftManagementDatabase.maxMRs;
+		for (int i=0; i<maxRecords; i++) {
+			int flightStatus = aircraftManagementDatabase.getStatus(i);
+			if (flightStatus != ManagementRecord.FREE) {
+				String code = aircraftManagementDatabase.getFlightCode(i);
+				Integer gate = gateInfoDatabase.getGateByFlightCode(i);
+				model.addRow(new Object[]{code, flightStatus, gate});
 			}
 		}
-		if (aircraftDatabase != null) {
-			aircraftManagementDatabase = aircraftDatabase;
-		} else if (gateDatabase != null) {
-			gateInfoDatabase = gateDatabase;
+
+		// update the available gates
+		gatesComboBox.removeAllItems();
+		for (int i=0; i<gateInfoDatabase.maxGateNumber; i++) {
+			if (gateInfoDatabase.getStatus(i) == Gate.FREE) {
+				gatesComboBox.addItem(i);
+			}
 		}
 	}
 }

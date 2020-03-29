@@ -74,7 +74,9 @@ public class GateInfoDatabase  extends Observable  {
 	 * Obtain and return the status of the given gate identified by the gateNumber parameter.
 	 */
 	public int getStatus(int gateNumber) {
-		if (gates.length <= gateNumber && gates.length < 0) {
+		// lowest gate is 0, highest is 1, as we have 2 gates available {0,1}
+		// invalid bounds are -1 and 2
+		if (gateNumber <= maxGateNumber && gateNumber > -1 && gates.length > 0) {
 			return gates[gateNumber].getStatus();
 		}
 		// -1 signifies invalid status
@@ -100,16 +102,19 @@ public class GateInfoDatabase  extends Observable  {
 	/**
 	 * Forward a status change request to the given gate identified by the gateNumber parameter. Called to allocate a free gate to the aircraft identified by mCode.
 	 */
-	  public void allocate(int gateNumber, int mCode){
+	  public void allocate(int gateNumber, int mCode) {
 		  gates[gateNumber].allocate(mCode);
-		  }
+		  instance.setChanged();
+		  instance.notifyObservers();
+	  }
 
 	/**
 	 * Forward a status change request to the given gate identified by the gateNumber parameter. Called to indicate that the expected aircraft has arrived at the gate.
 	 */
 	  public void docked(int gateNumber){
 		  gates[gateNumber].docked();
-		  
+		  instance.setChanged();
+		  instance.notifyObservers();
 	  }
 
 	/**
@@ -117,6 +122,32 @@ public class GateInfoDatabase  extends Observable  {
 	 */
 	  public void departed(int gateNumber){
 		  gates[gateNumber].departed();
+		  instance.setChanged();
+		  instance.notifyObservers();
 	  }
 
+	/**
+	 * Custom added function - frees gate if a flight was re-assigned to a different gate
+	 */
+	public void reassigned(int gateNumber) {
+		gates[gateNumber].reassigned();
+		instance.setChanged();
+		instance.notifyObservers();
 	}
+
+	/**
+	 * Advanced accessor, callers should be able to handle null values
+	 * @param mCode - flight code index
+	 * @return Integer representing the gate number.
+	 */
+	public Integer getGateByFlightCode(int mCode) {
+		for (int i=0; i<gates.length; i++) {
+			if (gates[i].getmCode() == mCode) {
+				return i;
+			}
+		}
+		// default value is -1
+		// returning null means -1 value doesn't need to be shown
+		return null;
+	}
+}

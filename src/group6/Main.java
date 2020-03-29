@@ -115,7 +115,7 @@ public class Main extends JDialog {
 		GateInfoDatabase gateInfoDatabase = GateInfoDatabase.getInstance();
 
 		new GOC(aircraftManagementDatabase, gateInfoDatabase);
-		new LATC(aircraftManagementDatabase, gateInfoDatabase);
+		new LATC(aircraftManagementDatabase);
 		new MaintenanceInspector(aircraftManagementDatabase);
 		new CleaningSupervisor(aircraftManagementDatabase);
 		new RefuellingSupervisor(aircraftManagementDatabase);

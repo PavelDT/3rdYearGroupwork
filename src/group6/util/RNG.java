@@ -40,13 +40,15 @@ public class RNG {
     private static String getFlightCode(String from) {
 
         Map<String, String> lookup = new Hashtable<String, String>();
-        lookup.put("ATL", "AT001");
-        lookup.put("PEK", "PK001");
-        lookup.put("LAX", "AA001");
-        lookup.put("HND", "HN001");
-        lookup.put("LHR", "BA001");
+        lookup.put("ATL", "AT00");
+        lookup.put("PEK", "PK00");
+        lookup.put("LAX", "AA00");
+        lookup.put("HND", "HN00");
+        lookup.put("LHR", "BA00");
 
-        return lookup.get(from);
+        // return flight code plus a random number
+        // reduces likelyhood of duplicate entries such as BA001
+        return lookup.get(from) + (rng.nextInt(9) + 1);
     }
 
     private static Itinerary generateItinerary() {
@@ -64,7 +66,6 @@ public class RNG {
 
         // generate between 5 and 20 passengers
         int bound = rng.nextInt(16) + 5;
-        System.out.println(bound);
         for (int i = 0; i < bound; i++) {
             // randomly pick the name from the list above
             passengerList.addPassenger(new PassengerDetails(names[rng.nextInt(5)]));

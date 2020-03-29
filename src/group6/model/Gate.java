@@ -32,7 +32,7 @@ public class Gate {
 
 	/**
 	 *  If the gate is reserved or occupied, the mCode of the MR of the aircraft which is expected/present.*/
-	  private int mCode;
+	  private int mCode = -1;
 
   /**
    *  Return the status code for this gate.
@@ -50,6 +50,7 @@ public class Gate {
 	  if(status == FREE)
 	  {
 	  status = RESERVED;
+	  this.mCode = mCode;
 	  }
   }
 
@@ -76,12 +77,23 @@ public class Gate {
 	  status = FREE;
 	  }
   }
+
+  public void reassigned() {
+  	status = FREE;
+  	mCode = -1;
+  }
+
+  public int getmCode() {
+  	return mCode;
+  }
   
   @Override
   public String toString()
   {
 	  StringBuilder sb = new StringBuilder();
 	  sb.append(status);
+	  sb.append(" ");
+	  sb.append(mCode);
 	  return sb.toString();
   }
 }

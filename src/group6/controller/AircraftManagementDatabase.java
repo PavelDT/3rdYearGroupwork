@@ -159,6 +159,14 @@ public class AircraftManagementDatabase extends Observable{
     }
 
     /**
+     * Allows access to all fights regardless of code.
+     * @return
+     */
+    public ManagementRecord[] getManagementRecords() {
+        return managementRecords;
+    }
+
+    /**
      * The radar has detected a new aircraft, and has obtained flight descriptor fd from it.
      * <p>
      * This operation finds a currently FREE MR and forwards the radarDetect request to it for recording.

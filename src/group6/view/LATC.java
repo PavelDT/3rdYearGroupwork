@@ -1,77 +1,43 @@
 package group6.view;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
 import group6.controller.AircraftManagementDatabase;
 import group6.controller.GateInfoDatabase;
+import group6.model.ManagementRecord;
 import group6.util.UISettings;
-import javax.swing.SpringLayout;
-import javax.swing.JLabel;
-import java.awt.Font;
-import javax.swing.JTextArea;
-import javax.swing.JTable;
-import javax.swing.JScrollPane;
 
 public class LATC extends JDialog implements Observer {
 
-	private final JPanel contentPanel = new JPanel();
-
-	private JTable table;
-	private GateInfoDatabase gateInfoDatabase;
-
 	private AircraftManagementDatabase aircraftManagementDatabase;
 
-	/** The user-defined model of the basket */
-	private static DefaultTableModel model;
+	/** The user-defined model of the flights */
+	private DefaultTableModel model;
+
+	private JTable table;
 
 	/**
 	 * Create the dialog.
 	 */
-	public LATC(AircraftManagementDatabase aircraftManagementDatabase, GateInfoDatabase gateInfoDatabase) {
+	public LATC(AircraftManagementDatabase aircraftManagementDatabase) {
 		this.aircraftManagementDatabase = aircraftManagementDatabase;
-		this.gateInfoDatabase = gateInfoDatabase;
 
 		setLocation(UISettings.LATCPosition);
 		setSize(UISettings.VIEW_WIDTH, UISettings.VIEW_HEIGHT);
-		getContentPane().setLayout(new BorderLayout());
-		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-		getContentPane().add(contentPanel, BorderLayout.CENTER);
-		SpringLayout sl_contentPanel = new SpringLayout();
-		contentPanel.setLayout(sl_contentPanel);
-		
-		JLabel lblTitle = new JLabel("LATC");
-		sl_contentPanel.putConstraint(SpringLayout.NORTH, lblTitle, 10, SpringLayout.NORTH, contentPanel);
-		sl_contentPanel.putConstraint(SpringLayout.WEST, lblTitle, 197, SpringLayout.WEST, contentPanel);
-		lblTitle.setFont(new Font("Arial Black", Font.BOLD, 26));
-		contentPanel.add(lblTitle);
-		
-		JTextArea textArea = new JTextArea();
-		sl_contentPanel.putConstraint(SpringLayout.NORTH, textArea, 86, SpringLayout.NORTH, contentPanel);
-		sl_contentPanel.putConstraint(SpringLayout.WEST, textArea, 21, SpringLayout.WEST, contentPanel);
-		contentPanel.add(textArea);
-		
-		JScrollPane scrollPane = new JScrollPane();
-		sl_contentPanel.putConstraint(SpringLayout.NORTH, scrollPane, 0, SpringLayout.NORTH, textArea);
-		sl_contentPanel.putConstraint(SpringLayout.WEST, scrollPane, 5, SpringLayout.EAST, textArea);
-		sl_contentPanel.putConstraint(SpringLayout.SOUTH, scrollPane, -71, SpringLayout.SOUTH, contentPanel);
-		sl_contentPanel.putConstraint(SpringLayout.EAST, scrollPane, 226, SpringLayout.WEST, contentPanel);
-		scrollPane.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		contentPanel.add(scrollPane);
-		
-		
-		model = new DefaultTableModel() {
+		setTitle("LATC");
 
+
+		model = new DefaultTableModel() {
 			@Override
 			public boolean isCellEditable(int row, int column) {
 				return false;
@@ -83,42 +49,119 @@ public class LATC extends JDialog implements Observer {
 		table.getTableHeader().setReorderingAllowed(false);
 		model.addColumn("AIRCRAFT");
 		model.addColumn("STATUS");
+		model.addColumn("ID");
 		table.setModel(model);
 
-		scrollPane.setViewportView(table);
+
+		JPanel row1 = new JPanel();
+		row1.setLayout(new BorderLayout());
+		JScrollPane tableScroll = new JScrollPane(table);
+		row1.add(tableScroll);
+		row1.setBorder(new EmptyBorder(10, 10, 10, 10));
+
+
+		// for allowing a flight to enter landing stage
+		JPanel row2 = new JPanel();
+		row2.setLayout(new FlowLayout());
+		Button grantLandingBtn = new Button("Grant Landing");
+		grantLandingBtn.setSize(200, 50);
+		grantLandingBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				grantLanding();
+			}
+		});
+		row2.add(grantLandingBtn);
+
+		// button for assigning gate
+		Button flightLandedBtn = new Button("Flight Landed");
+		flightLandedBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				flightLanded();
+			}
+		});
+		flightLandedBtn.setSize(200, 50);
+
+		Container contentPane = getContentPane();
+		contentPane.setLayout(new BorderLayout());
+
+		// group the combo box and assignGate button
+		row2.add(flightLandedBtn);
+
+		// add top level panel for all components
+		JPanel p = new JPanel();
+		p.add(row1);
+		p.add(row2);
+		BoxLayout boxLayout = new BoxLayout(p, BoxLayout.PAGE_AXIS);
+		p.setLayout(boxLayout);
+
+		contentPane.add(p);
+
+
+		aircraftManagementDatabase.addObserver(this);
 
 		setVisible(true);
 	}
 
-	public String[] checkForAircraft() {
-		int[] MRs = aircraftManagementDatabase.getWithStatus(1);
-		String[] aircraftCodes = new String[MRs.length];
-		for (int i = 0; i < MRs.length; i++) {
-			aircraftCodes[i] = aircraftManagementDatabase.getFlightCode(MRs[i]);
+	private void grantLanding() {
+		if (table.getSelectionModel().isSelectionEmpty() == true) {
+			JOptionPane.showMessageDialog(null, "Please select a flight!");
+			// prevent execution.
+			return;
 		}
-		return aircraftCodes;
+		int selectedIndex = table.getSelectedRow();
+		int mCode = (int)model.getValueAt(selectedIndex, 2);
+
+		// check if the flight that is selected for langing, has been given
+		// ground clearance
+		if (aircraftManagementDatabase.getStatus(mCode) != ManagementRecord.GROUND_CLEARANCE_GRANTED) {
+			JOptionPane.showMessageDialog(null, "Flight doesn't have Ground Clearance!");
+			// prevent execution.
+			return;
+		}
+
+		// status is correct and item is selected, update the flight to landing
+		aircraftManagementDatabase.setStatus(mCode, ManagementRecord.LANDING);
+	}
+
+	private void flightLanded() {
+		if (table.getSelectionModel().isSelectionEmpty() == true) {
+			JOptionPane.showMessageDialog(null, "Please select a flight!");
+			// prevent execution.
+			return;
+		}
+		int selectedIndex = table.getSelectedRow();
+		int mCode = (int)model.getValueAt(selectedIndex, 2);
+
+		// check if flight was in landing stage
+		if (aircraftManagementDatabase.getStatus(mCode) != ManagementRecord.LANDING) {
+			JOptionPane.showMessageDialog(null, "Flight doesn't have Ground Clearance!");
+			// prevent execution.
+			return;
+		}
+
+		// status is correct and item is selected, update the flight to landed
+		aircraftManagementDatabase.setStatus(mCode, ManagementRecord.LANDED);
 	}
 
 	@Override
 	public void update(Observable observable, Object o) {
-		AircraftManagementDatabase aircraftDatabase = null;
-		GateInfoDatabase gateDatabase = null;
-
-		try {
-			aircraftDatabase = (AircraftManagementDatabase) o;
-		} catch (ClassCastException e) {
-			try {
-				gateDatabase = (GateInfoDatabase) o;
-			} catch (ClassCastException f) {
-				System.out.println(f.getMessage());
-			}
+		model.setRowCount(0);
+		for(int i : aircraftManagementDatabase.getWithStatus(ManagementRecord.GROUND_CLEARANCE_GRANTED)) {
+			int status = aircraftManagementDatabase.getStatus(i);
+			String code = aircraftManagementDatabase.getFlightCode(i);
+			model.addRow(new Object[]{code, status, i});
 		}
 
-		if (aircraftDatabase != null) {
-			aircraftManagementDatabase = aircraftDatabase;
+		for(int i : aircraftManagementDatabase.getWithStatus(ManagementRecord.LANDING)) {
+			int status = aircraftManagementDatabase.getStatus(i);
+			String code = aircraftManagementDatabase.getFlightCode(i);
+			model.addRow(new Object[]{code, status, i});
 		}
-		if (gateDatabase != null) {
-			gateInfoDatabase = gateDatabase;
+
+		for(int i : aircraftManagementDatabase.getWithStatus(ManagementRecord.LANDED)) {
+			int status = aircraftManagementDatabase.getStatus(i);
+			String code = aircraftManagementDatabase.getFlightCode(i);
+			model.addRow(new Object[]{code, status, i});
 		}
 	}
 }
