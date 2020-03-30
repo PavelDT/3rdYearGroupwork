@@ -7,6 +7,9 @@ import group6.model.ManagementRecord;
 import group6.util.UISettings;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
 import java.util.Observable;
@@ -38,6 +41,11 @@ public class CleaningSupervisor extends JFrame implements Observer {
 	 */
 	private AircraftManagementDatabase aircraftManagementDatabase;
 
+	// table for the flights and their status
+	private JTable table;
+	// model of the flights list
+	private DefaultTableModel model;
+
 	public CleaningSupervisor(AircraftManagementDatabase aircraftManagementDatabase) {
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -46,47 +54,100 @@ public class CleaningSupervisor extends JFrame implements Observer {
 		setTitle("Cleaning Supervisor View");
 		setLocation(UISettings.CleaningSupervisorPosition);
 		setSize(UISettings.VIEW_WIDTH, UISettings.VIEW_HEIGHT);
+
 		Container window = getContentPane();
-		window.setLayout(new FlowLayout());
-		int[] aWaitClean = this.aircraftManagementDatabase.getWithStatus(ManagementRecord.OK_AWAIT_CLEAN);
+		window.setLayout(new BoxLayout(window, BoxLayout.PAGE_AXIS));
 
-		String[] aircraftCodes = new String[aWaitClean.length];
-		addAircraftCodes(0, this.aircraftManagementDatabase, aWaitClean, aircraftCodes);
+		JPanel row0 = new JPanel();
+		row0.setBorder(new EmptyBorder(0, 0, 10, 0));
+		row0.setLayout(new BorderLayout());
+		model = new DefaultTableModel() {
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
 
-		Vector<Vector> data = new Vector<>();
-		for (int i = 0; i < aircraftCodes.length; i++) {
-			Vector<String> row = new Vector<>();
-			row.addElement(aircraftCodes[i]);
-			data.addElement(row);
-		}
+		table = new JTable(model);
+		table.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		table.getTableHeader().setReorderingAllowed(false);
+		model.addColumn("ID");
+		model.addColumn("AIRCRAFT");
+		model.addColumn("STATUS");
+		table.setModel(model);
+		JScrollPane tableScroll = new JScrollPane(table);
+		row0.add(tableScroll);
 
-		Vector<String> columnNames = new Vector<>();
-		columnNames.addElement("Flights Awaiting Cleaning");
-		JTable table = new JTable(data, columnNames);
+		JPanel row1 = new JPanel();
+		row1.setLayout(new GridLayout());
 
-		JScrollPane aircraftScroll = new JScrollPane(table);
-		add(aircraftScroll, BorderLayout.CENTER);
+		JButton cleaningDoneBtn = new JButton("Cleaning Completed");
+		// java 8 lambda - less code, easier to read
+		cleaningDoneBtn.addActionListener(e -> planeCleaned());
+		row1.add(cleaningDoneBtn);
+
+		// add frames to window
+		window.add(row0);
+		window.add(row1);
+
+		// observe the singleton aircraftManDB
+		this.aircraftManagementDatabase.addObserver(this);
+
 		setVisible(true);
-		aircraftScroll.setPreferredSize(new Dimension(350, 150));
 	}
 
-	private void addAircraftCodes(int index, AircraftManagementDatabase aircraftManagementDatabase, int[] mrs,
-			String[] aircraftCodes) {
-		for (int i = index; i < mrs.length; i++) {
-			aircraftCodes[i] = aircraftManagementDatabase.getFlightCode(mrs[i]);
+	private void planeCleaned() {
+
+		if (table.getSelectionModel().isSelectionEmpty() == true) {
+			JOptionPane.showMessageDialog(null, "Please select a flight!");
+			// prevent execution.
+			return;
+		}
+
+		int selectedRowIndex = table.getSelectedRow();
+		// the the id of the managent record representing the flight
+		int mCode = (int)model.getValueAt(selectedRowIndex, 0);
+		int status = aircraftManagementDatabase.getStatus(mCode);
+
+		if (status == ManagementRecord.READY_CLEAN_AND_MAINT) {
+			// set status to CLEAN_AWAIT_MAINT
+			aircraftManagementDatabase.setStatus(mCode, ManagementRecord.CLEAN_AWAIT_MAINT);
+		} else if (status == ManagementRecord.OK_AWAIT_CLEAN) {
+			// flight has already passed inspection and doesn't need repairs / maintenance
+			// time to refuel
+			aircraftManagementDatabase.setStatus(mCode, ManagementRecord.READY_REFUEL);
+		} else if (status == ManagementRecord.FAULTY_AWAIT_CLEAN) {
+			// Plane is in FaultyAwaitingCleaning status
+			// It has now been cleaned but needs to be repaired
+			aircraftManagementDatabase.setStatus(mCode, ManagementRecord.AWAIT_REPAIR);
+		} else {
+			if (table.getSelectionModel().isSelectionEmpty() == true) {
+				JOptionPane.showMessageDialog(null, "Flight doesn't need cleaning");
+			}
 		}
 	}
 
 	@Override
 	public void update(Observable o, Object a) {
-		AircraftManagementDatabase aircraftDatabase = null;
-		try {
-			aircraftDatabase = (AircraftManagementDatabase) a;
-		} catch (ClassCastException e) {
-			System.out.println(e.getMessage());
-		}
-		if (aircraftDatabase != null) {
-			aircraftManagementDatabase = aircraftDatabase;
+		// empty the table
+		model.setRowCount(0);
+
+		// loop over every management record to update table
+		int maxRecords = aircraftManagementDatabase.maxMRs;
+		for (int i=0; i<maxRecords; i++) {
+			//int flightStatus = aircraftManagementDatabase.getStatus(i);
+			int flightStatus = aircraftManagementDatabase.getStatus(i);
+			// Status is displayd if its one of the below 4:
+			// READY_CLEAN_AND_MAINT = 8;
+			// FAULTY_AWAIT_CLEAN = 9;
+			// CLEAN_AWAIT_MAINT = 10;
+			// OK_AWAIT_CLEAN = 11;
+			if (flightStatus >= ManagementRecord.READY_CLEAN_AND_MAINT &&
+					flightStatus <= ManagementRecord.OK_AWAIT_CLEAN) {
+				// update table
+				String code = aircraftManagementDatabase.getFlightCode(i);
+				model.addRow(new Object[]{i, code, flightStatus});
+			}
 		}
 	}
 }
