@@ -212,11 +212,12 @@ public class GOC extends JDialog implements Observer {
 		// loop over every management record
 		int maxRecords = aircraftManagementDatabase.maxMRs;
 		for (int i=0; i<maxRecords; i++) {
-			int flightStatus = aircraftManagementDatabase.getStatus(i);
-			if (flightStatus != ManagementRecord.FREE) {
+			//int flightStatus = aircraftManagementDatabase.getStatus(i);
+			String flightStatus = aircraftManagementDatabase.getStringStatus(i);
+			if (!flightStatus.equals("FREE")) {
 				String code = aircraftManagementDatabase.getFlightCode(i);
 				Integer gate = gateInfoDatabase.getGateByFlightCode(i);
-				model.addRow(new Object[]{code, flightStatus, gate});
+				model.addRow(new Object[]{code, flightStatus, "Not Landed Yet"});
 			}
 		}
 

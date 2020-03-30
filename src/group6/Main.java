@@ -75,6 +75,7 @@ public class Main extends JDialog {
 			public void actionPerformed(ActionEvent e) {
 
 				createInterfaces();
+				btnStart.setEnabled(false);
 			}
 
 		});

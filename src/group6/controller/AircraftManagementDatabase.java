@@ -45,6 +45,10 @@ public class AircraftManagementDatabase extends Observable {
 	public int getStatus(int mCode) {
 		return managementRecords[mCode].getStatus();
 	}
+	
+	public String getStringStatus(int mCode) {
+		return managementRecords[mCode].getStringStatus();
+	}
 
 	/**
 	 * Accessor for gate number
@@ -260,8 +264,5 @@ public class AircraftManagementDatabase extends Observable {
 		return managementRecords[mCode].getItinerary();
 	}
 
-//	public int getMaxMRs() {
-//		return maxMRs;
-//	}
 
 }
