@@ -198,6 +198,7 @@ public class GOC extends JDialog implements Observer {
 		if (gateStats[gateNumber] == Gate.FREE) {
 			// use this gate
 			gateInfoDatabase.allocate(gateNumber, selectedIndex);
+			aircraftManagementDatabase.setStatus(selectedIndex, ManagementRecord.TAXIING);
 			model.setValueAt(gateNumber, selectedIndex, 2);
 		} else {
 			String msg = "Gate [" + gateNumber + "] isn't available, please chose a different gate!";

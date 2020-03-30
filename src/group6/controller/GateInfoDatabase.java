@@ -150,4 +150,14 @@ public class GateInfoDatabase  extends Observable  {
 		// returning null means -1 value doesn't need to be shown
 		return null;
 	}
+
+	/**
+	 * Flight mCode for a gate
+	 * Can return nulls
+	 * @param gate
+	 * @return Integer - can be null
+	 */
+	public Integer getFlightCodeByGate(int gate) {
+		return gates[gate].getmCode();
+	}
 }
