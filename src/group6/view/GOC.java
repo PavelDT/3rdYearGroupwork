@@ -3,9 +3,8 @@ package group6.view;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.*;
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -159,10 +158,6 @@ public class GOC extends JDialog implements Observer {
 		// we're checking the 3nd column
 		int flightStatus = ManagementRecord.stringStatusToNumber((String)model.getValueAt(selectedIndex, 2));
 		if (flightStatus != ManagementRecord.WANTING_TO_LAND) {
-			System.out.println(flightStatus);
-			System.out.println(flightStatus);
-			System.out.println(flightStatus);
-			System.out.println(flightStatus);
 			JOptionPane.showMessageDialog(null, "Flight isn't wanting to land!");
 			// prevent execution.
 			return;
@@ -184,16 +179,18 @@ public class GOC extends JDialog implements Observer {
 		int selectedIndex = table.getSelectedRow();
 
 		int flightStatus = ManagementRecord.stringStatusToNumber((String)model.getValueAt(selectedIndex, 2));
+		int mCode = (int)model.getValueAt(selectedIndex, 0);
 
-//		// todo - gate reassignment needs to be streamlined more.
-//		if (flightStatus == ManagementRecord.TAXIING) {
-//			// handle the gate re-assignment first
-//			Object currentGate = model.getValueAt(selectedIndex, 2);
-//			gateInfoDatabase.reassigned((int)currentGate);
-//			gateInfoDatabase.allocate((int)gatesComboBox.getSelectedItem(), selectedIndex);
-//			model.setValueAt(gatesComboBox.getSelectedItem(), selectedIndex, 2);
-//			return;
-//		}
+		// gate reassingment
+		if (flightStatus == ManagementRecord.TAXIING) {
+			int newGate = (Integer)gatesComboBox.getSelectedItem();
+			// handle the gate re-assignment first
+			int currentGate = (int)model.getValueAt(selectedIndex, 3);
+			gateInfoDatabase.allocate((int)gatesComboBox.getSelectedItem(), mCode);
+			gateInfoDatabase.reassigned(currentGate);
+			model.setValueAt(newGate, selectedIndex, 3);
+			return;
+		}
 		if (flightStatus != ManagementRecord.LANDED) {
 			String msg = "Flight hasn't landed!\nCan't assign gate until flight has landed.";
 			JOptionPane.showMessageDialog(null, msg);
@@ -202,9 +199,7 @@ public class GOC extends JDialog implements Observer {
 		}
 
 		int[] gateStats = gateInfoDatabase.getStatuses();
-
-		int mCode = (int)model.getValueAt(selectedIndex, 0);
-		int gateNumber = gatesComboBox.getSelectedIndex();
+		int gateNumber = (int)gatesComboBox.getSelectedItem();
 		if (gateStats[gateNumber] == Gate.FREE) {
 			// use this gate
 			gateInfoDatabase.allocate(gateNumber, mCode);
@@ -228,16 +223,17 @@ public class GOC extends JDialog implements Observer {
 			if (!flightStatus.equals("FREE")) {
 				String code = aircraftManagementDatabase.getFlightCode(i);
 				Integer gate = gateInfoDatabase.getGateByFlightCode(i);
-				model.addRow(new Object[]{i, code, flightStatus, "Not Landed Yet"});
+				model.addRow(new Object[]{i, code, flightStatus, gate});
 			}
 		}
 
 		// update the available gates
 		gatesComboBox.removeAllItems();
-		for (int i=0; i<gateInfoDatabase.maxGateNumber; i++) {
+		for (int i = 0; i < gateInfoDatabase.maxGateNumber; i++) {
 			if (gateInfoDatabase.getStatus(i) == Gate.FREE) {
 				gatesComboBox.addItem(i);
 			}
 		}
+
 	}
 }
