@@ -158,6 +158,7 @@ public class RadarTransceiver extends JDialog implements Observer {
 		table.getTableHeader().setReorderingAllowed(false);
 		TableColumnModel columnModel = table.getColumnModel();
 
+		model.addColumn("ID");
 		model.addColumn("AIRCRAFT");
 		model.addColumn("DESCRIPTION");
 		model.addColumn("TIME");
@@ -190,14 +191,16 @@ public class RadarTransceiver extends JDialog implements Observer {
 	// IT THEN NEEDS TO CALL METHOD IN AircraftManagementDatabase CALLED
 	// radarLostConatact and pass through the flight code
 	private void leaveAirspace() {
-		int mCode = 0;
 
 		if (table.getSelectionModel().isSelectionEmpty() == true) {
 			JOptionPane.showMessageDialog(null, "Please select a flight!");
-		} else {
-			aircraftManagementDatabase.radarLostContact(mCode);
+			return;
 		}
 
+		// fetch the first value of the currently selected row
+		// which represents the id of the flight aka mCode
+		int mCode = (int)model.getValueAt(table.getSelectedRow(), 0);
+		aircraftManagementDatabase.radarLostContact(mCode);
 	}
 
 	// NEED TO GET THE PASSENGERLIST FROM THE SELECTED ROW OF THE JLIST AND DISPLAY
@@ -206,21 +209,23 @@ public class RadarTransceiver extends JDialog implements Observer {
 
 		if (table.getSelectionModel().isSelectionEmpty() == true) {
 			JOptionPane.showMessageDialog(this, "Please select a flight!");
+			return;
 		}
 
-		else {
+		// fetch the first value of the currently selected row
+		// which represents the id of the flight aka mCode
+		int mCode = (int)model.getValueAt(table.getSelectedRow(), 0);
+		// remove details from previous flights
+		textArea.setText("");
 
-			// remove details from previous flights
-			textArea.setText("");
+		PassengerList passengerList = aircraftManagementDatabase.getPassengerList(mCode);
 
-			PassengerList passengerList = aircraftManagementDatabase.getPassengerList(table.getSelectedRow());
-
-			// for all the passengers on the flight add them to the text field as an
-			// individual line
-			for (PassengerDetails passenger : passengerList.getPassengerDetails()) {
-				textArea.append(passenger.getName() + "\n");
-			}
+		// for all the passengers on the flight add them to the text field as an
+		// individual line
+		for (PassengerDetails passenger : passengerList.getPassengerDetails()) {
+			textArea.append(passenger.getName() + "\n");
 		}
+
 	}
 
 	@Override
@@ -243,8 +248,7 @@ public class RadarTransceiver extends JDialog implements Observer {
 
 			// problem, all the times get updated
 
-			model.addRow(new Object[] { fd.getFlightCode(), fd.toString(), formatter.format(date) });
-
+			model.addRow(new Object[] { i, fd.getFlightCode(), fd.toString(), formatter.format(date) });
 		}
 	}
 }

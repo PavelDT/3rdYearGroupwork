@@ -76,6 +76,7 @@ public class GOC extends JDialog implements Observer {
 		table = new JTable(model);
 		table.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		table.getTableHeader().setReorderingAllowed(false);
+		model.addColumn("ID");
 		model.addColumn("AIRCRAFT");
 		model.addColumn("STATUS");
 		model.addColumn("GATE");
@@ -155,9 +156,13 @@ public class GOC extends JDialog implements Observer {
 
 		int selectedIndex = table.getSelectedRow();
 		// makse sure the flight's status is WAITING_TO_LAND
-		// we're checking the 2nd column, [0 index, 1 index (2nd col), 2 index ]
-		int flightStatus = ManagementRecord.stringStatusToNumber((String)model.getValueAt(selectedIndex, 1));
+		// we're checking the 3nd column
+		int flightStatus = ManagementRecord.stringStatusToNumber((String)model.getValueAt(selectedIndex, 2));
 		if (flightStatus != ManagementRecord.WANTING_TO_LAND) {
+			System.out.println(flightStatus);
+			System.out.println(flightStatus);
+			System.out.println(flightStatus);
+			System.out.println(flightStatus);
 			JOptionPane.showMessageDialog(null, "Flight isn't wanting to land!");
 			// prevent execution.
 			return;
@@ -178,7 +183,7 @@ public class GOC extends JDialog implements Observer {
 		}
 		int selectedIndex = table.getSelectedRow();
 
-		int flightStatus = ManagementRecord.stringStatusToNumber((String)model.getValueAt(selectedIndex, 1));
+		int flightStatus = ManagementRecord.stringStatusToNumber((String)model.getValueAt(selectedIndex, 2));
 
 //		// todo - gate reassignment needs to be streamlined more.
 //		if (flightStatus == ManagementRecord.TAXIING) {
@@ -198,12 +203,13 @@ public class GOC extends JDialog implements Observer {
 
 		int[] gateStats = gateInfoDatabase.getStatuses();
 
+		int mCode = (int)model.getValueAt(selectedIndex, 0);
 		int gateNumber = gatesComboBox.getSelectedIndex();
 		if (gateStats[gateNumber] == Gate.FREE) {
 			// use this gate
-			gateInfoDatabase.allocate(gateNumber, selectedIndex);
-			aircraftManagementDatabase.setStatus(selectedIndex, ManagementRecord.TAXIING);
-			model.setValueAt(gateNumber, selectedIndex, 2);
+			gateInfoDatabase.allocate(gateNumber, mCode);
+			aircraftManagementDatabase.setStatus(mCode, ManagementRecord.TAXIING);
+			model.setValueAt(gateNumber, mCode, 3);
 		} else {
 			String msg = "Gate [" + gateNumber + "] isn't available, please chose a different gate!";
 			JOptionPane.showMessageDialog(null, msg);
@@ -222,7 +228,7 @@ public class GOC extends JDialog implements Observer {
 			if (!flightStatus.equals("FREE")) {
 				String code = aircraftManagementDatabase.getFlightCode(i);
 				Integer gate = gateInfoDatabase.getGateByFlightCode(i);
-				model.addRow(new Object[]{code, flightStatus, "Not Landed Yet"});
+				model.addRow(new Object[]{i, code, flightStatus, "Not Landed Yet"});
 			}
 		}
 
