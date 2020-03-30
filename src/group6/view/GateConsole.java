@@ -161,6 +161,7 @@ public class GateConsole extends JFrame implements Observer, ActionListener {
 		window.add(row3);
 
 		aircraftManagementDatabase.addObserver(this);
+		gateInfoDatabase.addObserver(this);
 		setVisible(true);
 	}
 
@@ -226,10 +227,10 @@ public class GateConsole extends JFrame implements Observer, ActionListener {
 	public void update(Observable o, Object arg) {
 		int mCode = gateInfoDatabase.getFlightCodeByGate(gateNumber);
 		if (mCode == -1 || aircraftManagementDatabase.getStatus(mCode) != ManagementRecord.TAXIING) {
-			gateStatus.setText("Gate Closed");
+			resetGate();
 			// gate shouldn't be displaying anything yet
-				return;
-			}
+			return;
+		}
 
 		int flightStatus = aircraftManagementDatabase.getStatus(mCode);
 		// fetch the fight record
@@ -254,10 +255,20 @@ public class GateConsole extends JFrame implements Observer, ActionListener {
 			// todo -- ...
 		} else {
 			// disable everything, flight status shouldn't be manipulated by the gate
-			flightDocked.setEnabled(false);
-			flightUnloaded.setEnabled(false);
-			addPassenger.setEnabled(false);
-			flightLoaded.setEnabled(false);
+			resetGate();
 		}
+	}
+
+	/**
+	 * Disables all buttons and removes gate info
+	 */
+	public void resetGate() {
+		flightDocked.setEnabled(false);
+		flightUnloaded.setEnabled(false);
+		addPassenger.setEnabled(false);
+		flightLoaded.setEnabled(false);
+
+		gateInformation.setText("");
+		gateStatus.setText("Gate Closed");
 	}
 }
