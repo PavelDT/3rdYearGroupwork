@@ -17,12 +17,15 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 import javax.swing.JLabel;
 import java.awt.Font;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Random;
@@ -59,9 +62,9 @@ public class RadarTransceiver extends JDialog implements Observer {
 	private JTable table;
 	private static DefaultTableModel model;
 	private JTable table_1;
-	private JButton button;
-	private JButton button_1;
-	private JButton button_2;
+	private JButton btnEnter;
+	private JButton btnLeave;
+	private JButton btnViewPassenger;
 	private JTextArea textArea;
 	private JScrollPane scrollPane;
 	Random random = new Random();
@@ -83,45 +86,45 @@ public class RadarTransceiver extends JDialog implements Observer {
 		label.setFont(new Font("Arial Black", Font.BOLD, 26));
 		panel.add(label);
 
-		button = new JButton("Enter Airspace");
-		button.addActionListener(new ActionListener() {
+		btnEnter = new JButton("Enter Airspace");
+		btnEnter.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
 				enterAirspace();
 			}
 		});
-		sl_panel.putConstraint(SpringLayout.NORTH, button, 313, SpringLayout.NORTH, panel);
-		sl_panel.putConstraint(SpringLayout.SOUTH, button, -63, SpringLayout.SOUTH, panel);
-		sl_panel.putConstraint(SpringLayout.EAST, button, -541, SpringLayout.EAST, panel);
-		panel.add(button);
+		sl_panel.putConstraint(SpringLayout.NORTH, btnEnter, 313, SpringLayout.NORTH, panel);
+		sl_panel.putConstraint(SpringLayout.SOUTH, btnEnter, -63, SpringLayout.SOUTH, panel);
+		sl_panel.putConstraint(SpringLayout.EAST, btnEnter, -541, SpringLayout.EAST, panel);
+		panel.add(btnEnter);
 
-		button_1 = new JButton("Leave Airspace");
-		button_1.addActionListener(new ActionListener() {
+		btnLeave = new JButton("Leave Airspace");
+		btnLeave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
 				leaveAirspace();
 			}
 		});
-		sl_panel.putConstraint(SpringLayout.NORTH, button_1, 0, SpringLayout.NORTH, button);
-		sl_panel.putConstraint(SpringLayout.WEST, button_1, 30, SpringLayout.EAST, button);
-		sl_panel.putConstraint(SpringLayout.SOUTH, button_1, -63, SpringLayout.SOUTH, panel);
-		panel.add(button_1);
+		sl_panel.putConstraint(SpringLayout.NORTH, btnLeave, 0, SpringLayout.NORTH, btnEnter);
+		sl_panel.putConstraint(SpringLayout.WEST, btnLeave, 30, SpringLayout.EAST, btnEnter);
+		sl_panel.putConstraint(SpringLayout.SOUTH, btnLeave, -63, SpringLayout.SOUTH, panel);
+		panel.add(btnLeave);
 
-		button_2 = new JButton("View Passenger List");
-		button_2.addActionListener(new ActionListener() {
+		btnViewPassenger = new JButton("View Passenger List");
+		btnViewPassenger.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
 				viewPassengerList();
 			}
 		});
-		sl_panel.putConstraint(SpringLayout.NORTH, button_2, 0, SpringLayout.NORTH, button);
-		sl_panel.putConstraint(SpringLayout.WEST, button_2, 33, SpringLayout.EAST, button_1);
-		sl_panel.putConstraint(SpringLayout.SOUTH, button_2, -63, SpringLayout.SOUTH, panel);
-		panel.add(button_2);
+		sl_panel.putConstraint(SpringLayout.NORTH, btnViewPassenger, 0, SpringLayout.NORTH, btnEnter);
+		sl_panel.putConstraint(SpringLayout.WEST, btnViewPassenger, 33, SpringLayout.EAST, btnLeave);
+		sl_panel.putConstraint(SpringLayout.SOUTH, btnViewPassenger, -63, SpringLayout.SOUTH, panel);
+		panel.add(btnViewPassenger);
 
 		textArea = new JTextArea();
 		sl_panel.putConstraint(SpringLayout.NORTH, textArea, 78, SpringLayout.NORTH, panel);
-		sl_panel.putConstraint(SpringLayout.WEST, textArea, 24, SpringLayout.EAST, button_2);
+		sl_panel.putConstraint(SpringLayout.WEST, textArea, 24, SpringLayout.EAST, btnViewPassenger);
 		sl_panel.putConstraint(SpringLayout.SOUTH, textArea, -63, SpringLayout.SOUTH, panel);
 		sl_panel.putConstraint(SpringLayout.EAST, textArea, -23, SpringLayout.EAST, panel);
 		panel.add(textArea);
@@ -135,8 +138,8 @@ public class RadarTransceiver extends JDialog implements Observer {
 		scrollPane = new JScrollPane();
 		sl_panel.putConstraint(SpringLayout.NORTH, scrollPane, 102, SpringLayout.NORTH, panel);
 		sl_panel.putConstraint(SpringLayout.WEST, scrollPane, 69, SpringLayout.WEST, panel);
-		sl_panel.putConstraint(SpringLayout.SOUTH, scrollPane, -7, SpringLayout.NORTH, button);
-		sl_panel.putConstraint(SpringLayout.EAST, scrollPane, 0, SpringLayout.EAST, button_1);
+		sl_panel.putConstraint(SpringLayout.SOUTH, scrollPane, -7, SpringLayout.NORTH, btnEnter);
+		sl_panel.putConstraint(SpringLayout.EAST, scrollPane, 0, SpringLayout.EAST, btnViewPassenger);
 		panel.add(scrollPane);
 
 		model = new DefaultTableModel() {
@@ -150,8 +153,16 @@ public class RadarTransceiver extends JDialog implements Observer {
 		table = new JTable(model);
 		table.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		table.getTableHeader().setReorderingAllowed(false);
+		TableColumnModel columnModel = table.getColumnModel();
+
 		model.addColumn("AIRCRAFT");
-		model.addColumn("STATUS");
+		model.addColumn("DESCRIPTION");
+		model.addColumn("TIME");
+
+		columnModel.getColumn(0).setPreferredWidth(5);
+		columnModel.getColumn(1).setPreferredWidth(100);
+		columnModel.getColumn(2).setPreferredWidth(5);
+
 		table.setModel(model);
 
 		scrollPane.setViewportView(table);
@@ -162,15 +173,12 @@ public class RadarTransceiver extends JDialog implements Observer {
 	}
 
 	/**
-	 * Uses RNG class to create an itinerary and then sneding the FlightDescriptor
+	 * Uses RNG class to create an itinerary and then sending the FlightDescriptor
 	 * to the aircraftManagementDatabase
 	 */
 	private void enterAirspace() {
 
-		// FlightDescriptor fd = RNG.generateFlightDescriptor();
-
 		aircraftManagementDatabase.radarDetect(RNG.generateFlightDescriptor());
-		// aircraftManagementDatabase.radarDetect(fd);
 
 	}
 
@@ -181,7 +189,12 @@ public class RadarTransceiver extends JDialog implements Observer {
 	private void leaveAirspace() {
 		int mCode = 0;
 
-		aircraftManagementDatabase.radarLostContact(mCode);
+		if (table.getSelectionModel().isSelectionEmpty() == true) {
+			JOptionPane.showMessageDialog(null, "Please select a flight!");
+		} else {
+			aircraftManagementDatabase.radarLostContact(mCode);
+		}
+
 	}
 
 	// NEED TO GET THE PASSENGERLIST FROM THE SELECTED ROW OF THE JLIST AND DISPLAY
@@ -189,7 +202,7 @@ public class RadarTransceiver extends JDialog implements Observer {
 	private void viewPassengerList() {
 
 		if (table.getSelectionModel().isSelectionEmpty() == true) {
-			JOptionPane.showMessageDialog(null, "Please select a flight!");
+			JOptionPane.showMessageDialog(this, "Please select a flight!");
 		}
 
 		else {
@@ -222,7 +235,10 @@ public class RadarTransceiver extends JDialog implements Observer {
 
 			FlightDescriptor fd = new FlightDescriptor(flightCode, itinerary, passengerList);
 
-			model.addRow(new Object[] { fd.getFlightCode(), "Wanting to Land" });
+			SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+			Date date = new Date();
+
+			model.addRow(new Object[] { fd.getFlightCode(), fd.toString(), formatter.format(date) });
 
 //	            String flightDetails = aircraftManagementDatabase.getFlightCode(i) + " | " + " F: " + itinerary.getFrom()
 //	                    + " T: " + itinerary.getTo() + " N: " + itinerary.getNext();
