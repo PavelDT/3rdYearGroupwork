@@ -16,6 +16,7 @@ import group6.model.ManagementRecord;
 import group6.model.PassengerDetails;
 import group6.controller.AircraftManagementDatabase;
 import group6.controller.GateInfoDatabase;
+import group6.model.PassengerList;
 import group6.util.UISettings;
 
 /**
@@ -187,7 +188,9 @@ public class GateConsole extends JFrame implements Observer, ActionListener {
 	private void dockFlight() {
 		gateInfoDatabase.docked(this.gateNumber);
 		int mCode = gateInfoDatabase.getFlightCodeByGate(gateNumber);
+
 		aircraftManagementDatabase.setStatus(mCode, ManagementRecord.UNLOADING);
+		String flightCode = aircraftManagementDatabase.getFlightCode(mCode);
 
 		String gateInfo = flightCode + " has now docked at " + gateNumber + "gate \n" +
 				          flightCode + " is currently unloading";
@@ -199,9 +202,17 @@ public class GateConsole extends JFrame implements Observer, ActionListener {
 	private void unloadFlight() {
 		int mCode = gateInfoDatabase.getFlightCodeByGate(gateNumber);
 		aircraftManagementDatabase.setStatus(mCode, ManagementRecord.READY_CLEAN_AND_MAINT);
+		// clear the passenger list.
+		// Java is pass-by-value where the value passes is a reference to the object
+		// so essentially I get back a reference to the passengerList thus i can reset
+		// the passenger list this way.
+		PassengerList passengerList = aircraftManagementDatabase.getPassengerList(mCode);
+		passengerList = new PassengerList();
 
-		String gateInfo = flightCode + " unloaded at " + gateNumber + "gate \n" +
-		flightCode + " is being serviced / cleaned";
+		String flightCode = aircraftManagementDatabase.getFlightCode(mCode);
+
+		String gateInfo = flightCode + " unloaded at gate No. " + gateNumber + "\n" +
+		                  "Flight is being serviced / cleaned";
 
 		gateInformation.setText(gateInfo);
 		gateStatus.setText("Flight Unloaded");
@@ -226,13 +237,19 @@ public class GateConsole extends JFrame implements Observer, ActionListener {
 	@Override
 	public void update(Observable o, Object arg) {
 		int mCode = gateInfoDatabase.getFlightCodeByGate(gateNumber);
-		if (mCode == -1 || aircraftManagementDatabase.getStatus(mCode) != ManagementRecord.TAXIING) {
-			resetGate();
+		// safeguard against changing the flight's status until its correct to do so
+		if (mCode == -1) {
 			// gate shouldn't be displaying anything yet
+			resetGate();
+			return;
+		}
+		int flightStatus = aircraftManagementDatabase.getStatus(mCode);
+		if (flightStatus != ManagementRecord.TAXIING && flightStatus != ManagementRecord.UNLOADING) {
+			// gate shouldn't be displaying anything yet
+			resetGate();
 			return;
 		}
 
-		int flightStatus = aircraftManagementDatabase.getStatus(mCode);
 		// fetch the fight record
 		Itinerary i = aircraftManagementDatabase.getItinerary(mCode);
 		String flightCode = aircraftManagementDatabase.getFlightCode(mCode);
@@ -251,8 +268,6 @@ public class GateConsole extends JFrame implements Observer, ActionListener {
 			flightUnloaded.setEnabled(true);
 			addPassenger.setEnabled(false);
 			flightLoaded.setEnabled(false);
-		} else if (flightStatus == ManagementRecord.READY_CLEAN_AND_MAINT) {
-			// todo -- ...
 		} else {
 			// disable everything, flight status shouldn't be manipulated by the gate
 			resetGate();
