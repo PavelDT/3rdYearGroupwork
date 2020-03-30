@@ -35,7 +35,7 @@ public class GateInfoDatabase  extends Observable  {
 	   *  A constant: the number of aircraft gates at the airport.
 	   */
 	  
-	  public static int maxGateNumber = 2;
+	  public static int maxGateNumber = 3;
 
 	/**
 	 * Singleton implementation to restrict only one instance of this class.

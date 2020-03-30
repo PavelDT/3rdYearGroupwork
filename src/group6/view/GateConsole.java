@@ -89,8 +89,19 @@ public class GateConsole extends JFrame implements Observer, ActionListener {
 
 		this.gateNumber = gateNumber;
 
-		setTitle("Gate Console");
-		setLocation(UISettings.GateConsolePosition);
+		setTitle("Gate Console " + gateNumber);
+		if(gateNumber == 0)
+		{
+			setLocation(UISettings.GateConsolePosition0);
+		}
+		else if(gateNumber == 1)
+		{
+			setLocation(UISettings.GateConsolePosition1);
+		}
+		else if(gateNumber == 2)
+		{
+			setLocation(UISettings.GateConsolePosition2);
+		}
 		setSize(UISettings.VIEW_WIDTH, UISettings.VIEW_HEIGHT);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		Container window = getContentPane();
