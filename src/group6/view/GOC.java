@@ -156,7 +156,8 @@ public class GOC extends JDialog implements Observer {
 		int selectedIndex = table.getSelectedRow();
 		// makse sure the flight's status is WAITING_TO_LAND
 		// we're checking the 2nd column, [0 index, 1 index (2nd col), 2 index ]
-		if ((int)model.getValueAt(selectedIndex, 1) != ManagementRecord.WANTING_TO_LAND) {
+		int flightStatus = ManagementRecord.stringStatusToNumber((String)model.getValueAt(selectedIndex, 1));
+		if (flightStatus != ManagementRecord.WANTING_TO_LAND) {
 			JOptionPane.showMessageDialog(null, "Flight isn't wanting to land!");
 			// prevent execution.
 			return;
@@ -177,19 +178,22 @@ public class GOC extends JDialog implements Observer {
 		}
 		int selectedIndex = table.getSelectedRow();
 
-		if ((int)model.getValueAt(selectedIndex, 1) != ManagementRecord.LANDED) {
+		int flightStatus = ManagementRecord.stringStatusToNumber((String)model.getValueAt(selectedIndex, 1));
+
+//		// todo - gate reassignment needs to be streamlined more.
+//		if (flightStatus == ManagementRecord.TAXIING) {
+//			// handle the gate re-assignment first
+//			Object currentGate = model.getValueAt(selectedIndex, 2);
+//			gateInfoDatabase.reassigned((int)currentGate);
+//			gateInfoDatabase.allocate((int)gatesComboBox.getSelectedItem(), selectedIndex);
+//			model.setValueAt(gatesComboBox.getSelectedItem(), selectedIndex, 2);
+//			return;
+//		}
+		if (flightStatus != ManagementRecord.LANDED) {
 			String msg = "Flight hasn't landed!\nCan't assign gate until flight has landed.";
 			JOptionPane.showMessageDialog(null, msg);
 			// prevent execution.
 			return;
-		}
-
-
-		// todo -- do we need special rules for gate re-assignment?
-		// if the flight already has a gate assigned to it, set that gate's status to free
-		Object currentGate = model.getValueAt(selectedIndex, 2);
-		if (currentGate != null) {
-			gateInfoDatabase.reassigned((int)currentGate);
 		}
 
 		int[] gateStats = gateInfoDatabase.getStatuses();

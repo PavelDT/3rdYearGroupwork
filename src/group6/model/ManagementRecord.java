@@ -185,7 +185,6 @@ public class ManagementRecord {
   }
 
   public String getStringStatus(){
-	  
 	  if(status == 0)
 		  return "FREE";
 	  if(status == 1)
@@ -224,11 +223,57 @@ public class ManagementRecord {
 		  return "AWAITING TAKEOFF";
 	  if(status == 18)
 		  return "DEPARTING";
-	  
-	return "";
 
-	    
-	  }
+	  // default
+	  return "";
+  }
+
+  public static int stringStatusToNumber(String status) {
+      switch (status) {
+          case "FREE":
+              return ManagementRecord.FREE;
+          case "IN TRANSIT":
+              return 1;
+          case "WAITING TO LAND":
+              return 2;
+          case "GROUND CLEARENCE GRANTED":
+              return 3;
+          case "LANDING":
+              return 4;
+          case "LANDED":
+              return 5;
+          case "TAXIING":
+              return 6;
+          case "UNLOADING":
+              return 7;
+          case "READY CLEAN AND MAINT":
+              return 8;
+          case "FAULTY AWAIT CLEAN":
+              return 9;
+          case "CLEAN AWAIT MAINT":
+              return 10;
+          case "OK AWAIT CLEAN":
+              return 11;
+          case "AWAIT REPAIR":
+              return 12;
+          case "READY REFUEL":
+              return 13;
+          case "READY PASSENGERS":
+              return 14;
+          case "READY DEPART":
+              return 15;
+          case "AWAITING TAXI":
+              return 16;
+          case "AWAITING TAKEOFF":
+              return 17;
+          case "DEPARTING":
+              return 18;
+          default:
+              return -1;
+      }
+  }
+
+
   /**
    * Return the status code of this MR.
    */
