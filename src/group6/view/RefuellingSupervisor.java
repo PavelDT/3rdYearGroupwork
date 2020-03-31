@@ -1,4 +1,5 @@
 package group6.view;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
@@ -9,8 +10,6 @@ import group6.model.ManagementRecord;
 import group6.util.UISettings;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Observable;
 import java.util.Observer;
 

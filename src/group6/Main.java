@@ -1,16 +1,12 @@
 package group6;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 import group6.controller.AircraftManagementDatabase;
 import group6.controller.GateInfoDatabase;
-import group6.model.FlightDescriptor;
-import group6.model.ManagementRecord;
-import group6.util.RNG;
 import group6.util.UISettings;
 import group6.view.CleaningSupervisor;
 import group6.view.GOC;

@@ -14,7 +14,6 @@ import group6.model.ManagementRecord;
 import group6.model.PassengerDetails;
 import group6.controller.AircraftManagementDatabase;
 import group6.controller.GateInfoDatabase;
-import group6.model.PassengerList;
 import group6.util.UISettings;
 
 /**

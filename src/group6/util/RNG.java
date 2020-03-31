@@ -1,13 +1,11 @@
 package group6.util;
 
-import group6.controller.AircraftManagementDatabase;
 import group6.model.FlightDescriptor;
 import group6.model.Itinerary;
 import group6.model.PassengerDetails;
 import group6.model.PassengerList;
 
 import java.security.SecureRandom;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 
@@ -25,9 +23,6 @@ public class RNG {
         // list of passengers
         PassengerList passengerList = generatePassengers();
         FlightDescriptor flightDescriptor = new FlightDescriptor(flightCode, itinerary, passengerList);
-
-        // if we wanted to flight to the system
-        // AircraftManagementDatabase.getInstance().radarDetect(flightDescriptor);
 
         return flightDescriptor;
     }

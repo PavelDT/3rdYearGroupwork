@@ -11,10 +11,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.Vector;
 
 /**
  * An interface to SAAMS: Cleaning Supervisor Screen: Inputs events from the

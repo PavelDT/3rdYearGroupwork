@@ -1,9 +1,6 @@
 package group6.view;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -13,7 +10,6 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
 import group6.controller.AircraftManagementDatabase;
-import group6.controller.GateInfoDatabase;
 import group6.model.ManagementRecord;
 import group6.util.UISettings;
 

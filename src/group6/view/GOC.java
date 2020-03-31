@@ -1,13 +1,9 @@
 package group6.view;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.*;
-import java.util.List;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
@@ -170,18 +166,15 @@ public class GOC extends JFrame implements Observer {
 
 		int mCode = (int)model.getValueAt(selectedIndex, 0);
 		int flightStatus = aircraftManagementDatabase.getStatus(mCode);
+
 		if (flightStatus != ManagementRecord.WANTING_TO_LAND) {
 			JOptionPane.showMessageDialog(null, "Flight isn't wanting to land!");
 			// prevent execution.
 			return;
-		} else {
-			// todo -- this is the IN_TRANSIT scenario, set the status and wait for the
-			// flight
-			// to be lost form the radar.
 		}
 
 		// grant permission for landing and update status
-		aircraftManagementDatabase.setStatus(selectedIndex, ManagementRecord.GROUND_CLEARANCE_GRANTED);
+		aircraftManagementDatabase.setStatus(mCode, ManagementRecord.GROUND_CLEARANCE_GRANTED);
 	}
 
 	public void assignGate() {
@@ -218,7 +211,6 @@ public class GOC extends JFrame implements Observer {
 			// use this gate
 			gateInfoDatabase.allocate(gateNumber, mCode);
 			aircraftManagementDatabase.setStatus(mCode, ManagementRecord.TAXIING);
-			model.setValueAt(gateNumber, mCode, 3);
 		} else {
 			String msg = "Gate [" + gateNumber + "] isn't available, please chose a different gate!";
 			JOptionPane.showMessageDialog(null, msg);
@@ -279,12 +271,8 @@ public class GOC extends JFrame implements Observer {
 		}
 
 		int planeStatus = aircraftManagementDatabase.getStatus((int) model.getValueAt(selectedIndex, 0));
-		System.out.println(planeStatus);
-		System.out.println(planeStatus);
-		System.out.println(planeStatus);
 
 		if (planeStatus == ManagementRecord.WANTING_TO_LAND) {
-			System.out.println("AAA");
 			btnGrantGroundClearance.setEnabled(true);
 		} else if (planeStatus == ManagementRecord.LANDED) {
 			btnAssignGate.setEnabled(true);

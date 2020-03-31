@@ -1,7 +1,5 @@
 package group6.view;
 
-import java.awt.EventQueue;
-
 import javax.swing.*;
 
 import group6.controller.AircraftManagementDatabase;
@@ -14,25 +12,17 @@ import group6.util.RNG;
 import group6.util.UISettings;
 
 import javax.swing.border.TitledBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import java.awt.Font;
 
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.Random;
 import java.awt.event.ActionEvent;
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
 
 /**
  * An interface to SAAMS: Radar tracking of arriving and departing aircraft, and
