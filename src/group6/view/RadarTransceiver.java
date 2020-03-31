@@ -267,7 +267,7 @@ public class RadarTransceiver extends JDialog implements Observer {
 	public void update(Observable observable, Object o) {
 		// reset the flights wanting to land list
 		model.setRowCount(0);
-
+		
 		// when the observer (this UI) is updated
 		// update the UI to display all flights wanting to land.
 		for (int i : aircraftManagementDatabase.getWithStatus(ManagementRecord.WANTING_TO_LAND)) {
@@ -280,7 +280,6 @@ public class RadarTransceiver extends JDialog implements Observer {
 
 			SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
 			Date date = new Date();
-
 			// problem, all the times get updated
 			model.addRow(new Object[] { i, fd.getFlightCode(), fd.toString(), formatter.format(date) });
 		}
@@ -295,8 +294,22 @@ public class RadarTransceiver extends JDialog implements Observer {
 
 			SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
 			Date date = new Date();
-
+			
 			model.addRow(new Object[] { i, fd.getFlightCode(), fd.toString(), formatter.format(date) });
 		}
+		
+		for (int i : aircraftManagementDatabase.getWithStatus(ManagementRecord.IN_TRANSIT)) {
+
+            String flightCode = aircraftManagementDatabase.getFlightCode(i);
+            Itinerary itinerary = aircraftManagementDatabase.getItinerary(i);
+            PassengerList passengerList = aircraftManagementDatabase.getPassengerList(i);
+
+            FlightDescriptor fd = new FlightDescriptor(flightCode, itinerary, passengerList);
+
+            SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+            Date date = new Date();
+
+            model.addRow(new Object[] { i, fd.getFlightCode(), fd.toString(), formatter.format(date) });
+        }
 	}
 }

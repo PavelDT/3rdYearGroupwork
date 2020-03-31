@@ -73,4 +73,11 @@ public class RNG {
 
         return passengerList;
     }
+    
+    public static int generateRandomStatus()
+    {
+    	int ran = (rng.nextInt(100) + 1);
+    	
+    	return ran;
+    }
 }
