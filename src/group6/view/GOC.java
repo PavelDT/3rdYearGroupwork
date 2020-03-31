@@ -10,6 +10,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 
 import group6.controller.AircraftManagementDatabase;
 import group6.controller.GateInfoDatabase;
@@ -37,6 +38,10 @@ public class GOC extends JDialog implements Observer {
 	private JComboBox<Integer> gatesComboBox;
 	// model of the flights list
 	private DefaultTableModel model;
+	private JButton btnAssignGate;
+	private JButton btnGrantGroundClearance;
+	private JPanel panel;
+	private JScrollPane scrollPane;
 
 	/**
 	 * An interface to SAAMS: A Ground Operations Controller Screen: Inputs events
@@ -65,6 +70,18 @@ public class GOC extends JDialog implements Observer {
 
 		setTitle("GOC");
 
+		panel = new JPanel();
+		getContentPane().add(panel, BorderLayout.CENTER);
+		SpringLayout sl_panel = new SpringLayout();
+		panel.setLayout(sl_panel);
+
+		scrollPane = new JScrollPane();
+		sl_panel.putConstraint(SpringLayout.NORTH, scrollPane, 10, SpringLayout.NORTH, panel);
+		sl_panel.putConstraint(SpringLayout.WEST, scrollPane, 10, SpringLayout.WEST, panel);
+		sl_panel.putConstraint(SpringLayout.SOUTH, scrollPane, 186, SpringLayout.NORTH, panel);
+		sl_panel.putConstraint(SpringLayout.EAST, scrollPane, 413, SpringLayout.WEST, panel);
+		panel.add(scrollPane);
+
 		model = new DefaultTableModel() {
 			@Override
 			public boolean isCellEditable(int row, int column) {
@@ -72,79 +89,63 @@ public class GOC extends JDialog implements Observer {
 			}
 		};
 
-		table = new JTable(model);
+		table = new JTable();
 		table.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		table.getTableHeader().setReorderingAllowed(false);
+		table.setModel(model);
+		TableColumnModel columnModel = table.getColumnModel();
+
 		model.addColumn("ID");
 		model.addColumn("AIRCRAFT");
 		model.addColumn("STATUS");
 		model.addColumn("GATE");
-		table.setModel(model);
 		
-	
 
+		columnModel.getColumn(0).setPreferredWidth(1);
+		columnModel.getColumn(1).setPreferredWidth(5);
+		columnModel.getColumn(2).setPreferredWidth(120);
+		columnModel.getColumn(3).setPreferredWidth(5);
+		scrollPane.setViewportView(table);
 
-		JPanel row1 = new JPanel();
-		row1.setLayout(new BorderLayout());
-		JScrollPane tableScroll = new JScrollPane(table);
-		row1.add(tableScroll);
-		row1.setBorder(new EmptyBorder(10, 10, 10, 10));
-
-
-		// for allowing a flight to land
-		JPanel row2 = new JPanel();
-		row2.setLayout(new FlowLayout());
-		Button grantLandingPermissionBtn = new Button("Grant Ground Clearance");
-		grantLandingPermissionBtn.setSize(200, 50);
-		grantLandingPermissionBtn.addActionListener(new ActionListener() {
+		btnGrantGroundClearance = new JButton("Grant Ground Clearance");
+		btnGrantGroundClearance.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				grantLandingPermission();
 			}
 		});
-		row2.add(grantLandingPermissionBtn);
+		sl_panel.putConstraint(SpringLayout.NORTH, btnGrantGroundClearance, 14, SpringLayout.SOUTH, scrollPane);
+		sl_panel.putConstraint(SpringLayout.WEST, btnGrantGroundClearance, 0, SpringLayout.WEST, scrollPane);
+		panel.add(btnGrantGroundClearance);
 
-		// For assigning a gate to a flight
-		JPanel row3 = new JPanel();
-		row3.setLayout(new FlowLayout());
-		// gate selection box
-		gatesComboBox = new JComboBox<Integer>();
-		gatesComboBox.addItem(1);
-		gatesComboBox.addItem(2);
-		gatesComboBox.addItem(3);
-		// button for assigning gate
-		Button assignGateBtn = new Button("Assign Gate");
-		assignGateBtn.addActionListener(new ActionListener() {
+		btnAssignGate = new JButton("Assign Gate");
+		btnAssignGate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				assignGate();
 			}
 		});
-		assignGateBtn.setSize(200, 50);
+		sl_panel.putConstraint(SpringLayout.NORTH, btnAssignGate, 0, SpringLayout.NORTH, btnGrantGroundClearance);
+		sl_panel.putConstraint(SpringLayout.WEST, btnAssignGate, 46, SpringLayout.EAST, btnGrantGroundClearance);
+		panel.add(btnAssignGate);
 
-		Container contentPane = getContentPane();
-		contentPane.setLayout(new BorderLayout());
+		gatesComboBox = new JComboBox<Integer>();
+		gatesComboBox.addItem(0);
+		gatesComboBox.addItem(1);
+		gatesComboBox.addItem(2);
+		
+		sl_panel.putConstraint(SpringLayout.WEST, gatesComboBox, 6, SpringLayout.EAST, btnAssignGate);
+		sl_panel.putConstraint(SpringLayout.SOUTH, gatesComboBox, 0, SpringLayout.SOUTH, btnGrantGroundClearance);
+		panel.add(gatesComboBox);
 
-		// group the combo box and assignGate button
-		row3.add(assignGateBtn);
-		row3.add(gatesComboBox);
+	
+		
 
-		// add top level panel for all components
-		JPanel p = new JPanel();
-		p.add(row1);
-		p.add(row2);
-		p.add(row3);
-		BoxLayout boxLayout = new BoxLayout(p, BoxLayout.PAGE_AXIS);
-		p.setLayout(boxLayout);
-
-		contentPane.add(p);
-
-		// ensure we observe the singleton
 		aircraftManagementDatabase.addObserver(this);
 		gateInfoDatabase.addObserver(this);
-
-		setVisible(true);
 		
-		setBackground(Color.BLACK);
+		setVisible(true);
 	}
+
+
 
 	/**
 	 * Grants permission for a flight to land
@@ -160,14 +161,15 @@ public class GOC extends JDialog implements Observer {
 		int selectedIndex = table.getSelectedRow();
 		// makse sure the flight's status is WAITING_TO_LAND
 		// we're checking the 3nd column
-		int flightStatus = ManagementRecord.stringStatusToNumber((String)model.getValueAt(selectedIndex, 2));
+		int flightStatus = ManagementRecord.stringStatusToNumber((String) model.getValueAt(selectedIndex, 2));
 		if (flightStatus != ManagementRecord.WANTING_TO_LAND) {
 			JOptionPane.showMessageDialog(null, "Flight isn't wanting to land!");
 			// prevent execution.
 			return;
 		} else {
-			// todo -- this is the IN_TRANSIT scenario, set the status and wait for the flight
-			//         to be lost form the radar.
+			// todo -- this is the IN_TRANSIT scenario, set the status and wait for the
+			// flight
+			// to be lost form the radar.
 		}
 
 		// grant permission for landing and update status
@@ -182,15 +184,15 @@ public class GOC extends JDialog implements Observer {
 		}
 		int selectedIndex = table.getSelectedRow();
 
-		int flightStatus = ManagementRecord.stringStatusToNumber((String)model.getValueAt(selectedIndex, 2));
-		int mCode = (int)model.getValueAt(selectedIndex, 0);
+		int flightStatus = ManagementRecord.stringStatusToNumber((String) model.getValueAt(selectedIndex, 2));
+		int mCode = (int) model.getValueAt(selectedIndex, 0);
 
 		// gate reassingment
 		if (flightStatus == ManagementRecord.TAXIING) {
-			int newGate = (Integer)gatesComboBox.getSelectedItem();
+			int newGate = (Integer) gatesComboBox.getSelectedItem();
 			// handle the gate re-assignment first
-			int currentGate = (int)model.getValueAt(selectedIndex, 3);
-			gateInfoDatabase.allocate((int)gatesComboBox.getSelectedItem(), mCode);
+			int currentGate = (int) model.getValueAt(selectedIndex, 3);
+			gateInfoDatabase.allocate((int) gatesComboBox.getSelectedItem(), mCode);
 			gateInfoDatabase.reassigned(currentGate);
 			model.setValueAt(newGate, selectedIndex, 3);
 			return;
@@ -203,7 +205,7 @@ public class GOC extends JDialog implements Observer {
 		}
 
 		int[] gateStats = gateInfoDatabase.getStatuses();
-		int gateNumber = (int)gatesComboBox.getSelectedItem();
+		int gateNumber = (int) gatesComboBox.getSelectedItem();
 		if (gateStats[gateNumber] == Gate.FREE) {
 			// use this gate
 			gateInfoDatabase.allocate(gateNumber, mCode);
@@ -217,18 +219,18 @@ public class GOC extends JDialog implements Observer {
 
 	@Override
 	public void update(Observable observable, Object o) {
-		
+
 		model.setRowCount(0);
 
 		// loop over every management record
 		int maxRecords = aircraftManagementDatabase.maxMRs;
-		for (int i=0; i<maxRecords; i++) {
-			//int flightStatus = aircraftManagementDatabase.getStatus(i);
+		for (int i = 0; i < maxRecords; i++) {
+			// int flightStatus = aircraftManagementDatabase.getStatus(i);
 			String flightStatus = aircraftManagementDatabase.getStringStatus(i);
 			if (!flightStatus.equals("FREE")) {
 				String code = aircraftManagementDatabase.getFlightCode(i);
 				Integer gate = gateInfoDatabase.getGateByFlightCode(i);
-				model.addRow(new Object[]{i, code, flightStatus, gate});
+				model.addRow(new Object[] { i, code, flightStatus, gate });
 			}
 		}
 
@@ -242,3 +244,65 @@ public class GOC extends JDialog implements Observer {
 
 	}
 }
+
+
+//JPanel row1 = new JPanel();
+//row1.setLayout(new BorderLayout());
+//JScrollPane tableScroll = new JScrollPane(table);
+//row1.add(tableScroll);
+//row1.setBorder(new EmptyBorder(10, 10, 10, 10));
+//
+//
+//// for allowing a flight to land
+//JPanel row2 = new JPanel();
+//row2.setLayout(new FlowLayout());
+//Button grantLandingPermissionBtn = new Button("Grant Ground Clearance");
+//grantLandingPermissionBtn.setSize(200, 50);
+//grantLandingPermissionBtn.addActionListener(new ActionListener() {
+//	public void actionPerformed(ActionEvent e) {
+//		grantLandingPermission();
+//	}
+//});
+//row2.add(grantLandingPermissionBtn);
+//
+//// For assigning a gate to a flight
+//JPanel row3 = new JPanel();
+//row3.setLayout(new FlowLayout());
+//// gate selection box
+//gatesComboBox = new JComboBox<Integer>();
+//gatesComboBox.addItem(1);
+//gatesComboBox.addItem(2);
+//gatesComboBox.addItem(3);
+//// button for assigning gate
+//Button assignGateBtn = new Button("Assign Gate");
+//assignGateBtn.addActionListener(new ActionListener() {
+//	public void actionPerformed(ActionEvent e) {
+//		assignGate();
+//	}
+//});
+//assignGateBtn.setSize(200, 50);
+//
+//Container contentPane = getContentPane();
+//contentPane.setLayout(new BorderLayout());
+//
+//// group the combo box and assignGate button
+//row3.add(assignGateBtn);
+//row3.add(gatesComboBox);
+//
+//// add top level panel for all components
+//JPanel p = new JPanel();
+//p.add(row1);
+//p.add(row2);
+//p.add(row3);
+//BoxLayout boxLayout = new BoxLayout(p, BoxLayout.PAGE_AXIS);
+//p.setLayout(boxLayout);
+//
+//contentPane.add(p);
+//
+//// ensure we observe the singleton
+//aircraftManagementDatabase.addObserver(this);
+//gateInfoDatabase.addObserver(this);
+//
+//setVisible(true);
+//
+//setBackground(Color.BLACK);

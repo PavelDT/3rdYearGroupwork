@@ -44,6 +44,7 @@ import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import javax.swing.ScrollPaneConstants;
 
 /**
  * An interface to SAAMS: Radar tracking of arriving and departing aircraft, and
@@ -72,10 +73,10 @@ public class RadarTransceiver extends JDialog implements Observer {
 	private JButton btnEnter;
 	private JButton btnLeave;
 	private JButton btnViewPassenger;
-	private JTextArea textArea;
 	private JScrollPane scrollPane;
 	Random random = new Random();
 	private int rows = 0;
+	private JTextArea textArea;
 
 	public RadarTransceiver(AircraftManagementDatabase aircraftManagementDatabase) {
 		this.aircraftManagementDatabase = aircraftManagementDatabase;
@@ -127,20 +128,13 @@ public class RadarTransceiver extends JDialog implements Observer {
 		});
 		panel.add(btnViewPassenger);
 
-		textArea = new JTextArea();
-		sl_panel.putConstraint(SpringLayout.SOUTH, textArea, -90, SpringLayout.SOUTH, panel);
-		sl_panel.putConstraint(SpringLayout.NORTH, textArea, 78, SpringLayout.NORTH, panel);
-		sl_panel.putConstraint(SpringLayout.WEST, textArea, 491, SpringLayout.WEST, panel);
-		sl_panel.putConstraint(SpringLayout.EAST, textArea, -23, SpringLayout.EAST, panel);
-		panel.add(textArea);
-
 		JLabel label_1 = new JLabel("Passenger List");
-		sl_panel.putConstraint(SpringLayout.SOUTH, label_1, -6, SpringLayout.NORTH, textArea);
-		sl_panel.putConstraint(SpringLayout.EAST, label_1, -85, SpringLayout.EAST, panel);
 		label_1.setFont(new Font("Tahoma", Font.BOLD, 11));
 		panel.add(label_1);
 
 		scrollPane = new JScrollPane();
+		sl_panel.putConstraint(SpringLayout.NORTH, label_1, 1, SpringLayout.NORTH, scrollPane);
+		sl_panel.putConstraint(SpringLayout.WEST, label_1, 71, SpringLayout.EAST, scrollPane);
 		sl_panel.putConstraint(SpringLayout.EAST, btnLeave, 0, SpringLayout.EAST, scrollPane);
 		sl_panel.putConstraint(SpringLayout.NORTH, scrollPane, 78, SpringLayout.NORTH, panel);
 		sl_panel.putConstraint(SpringLayout.SOUTH, scrollPane, -90, SpringLayout.SOUTH, panel);
@@ -182,7 +176,19 @@ public class RadarTransceiver extends JDialog implements Observer {
 
 		btnLeave.setEnabled(false);
 		btnViewPassenger.setEnabled(false);
-
+		
+		textArea = new JTextArea();
+		textArea.setLineWrap(true);
+		sl_panel.putConstraint(SpringLayout.NORTH, textArea, 6, SpringLayout.SOUTH, label_1);
+		sl_panel.putConstraint(SpringLayout.SOUTH, textArea, -6, SpringLayout.NORTH, btnViewPassenger);
+		sl_panel.putConstraint(SpringLayout.WEST, textArea, 38, SpringLayout.EAST, scrollPane);
+		sl_panel.putConstraint(SpringLayout.EAST, textArea, 202, SpringLayout.EAST, scrollPane);
+		textArea.setVisible(true);
+		panel.add(textArea);
+		
+		
+		
+		
 		aircraftManagementDatabase.addObserver(this);
 
 		//TODO change colours of rows if planes are just passing by or in transit

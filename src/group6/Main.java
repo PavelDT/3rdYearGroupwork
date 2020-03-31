@@ -38,6 +38,8 @@ public class Main extends JDialog {
 	private JButton btnStart;
 	private JButton btnQuit;
 	private JLabel lblImage;
+	private JLabel lblVersion;
+	private double versionNo = 1.15;
 
 	/**
 	 * Launch the application.
@@ -108,6 +110,11 @@ public class Main extends JDialog {
 		radarGif = new ImageIcon(this.getClass().getResource("/radarGif.gif")).getImage();
 		radarGif = radarGif.getScaledInstance(300, 300, Image.SCALE_DEFAULT);
 		lblImage.setIcon(new ImageIcon(radarGif));
+		
+		lblVersion = new JLabel("V." + versionNo);
+		sl_contentPanel.putConstraint(SpringLayout.NORTH, lblVersion, 0, SpringLayout.NORTH, contentPanel);
+		sl_contentPanel.putConstraint(SpringLayout.WEST, lblVersion, 0, SpringLayout.WEST, contentPanel);
+		contentPanel.add(lblVersion);
 
 	}
 
