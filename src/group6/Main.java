@@ -128,7 +128,9 @@ public class Main extends JDialog {
 		new CleaningSupervisor(aircraftManagementDatabase);
 		new RefuellingSupervisor(aircraftManagementDatabase);
 		new RadarTransceiver(aircraftManagementDatabase);
-		new PublicInfo(aircraftManagementDatabase);
+		for (int publicInfo = 0; publicInfo < PublicInfo.maxPublicInfoScreens; publicInfo ++) {
+			new PublicInfo(aircraftManagementDatabase);
+		}
 		for (int gateNumber = 0; gateNumber < GateInfoDatabase.maxGateNumber; gateNumber++) {
 			new GateConsole(aircraftManagementDatabase, gateInfoDatabase, gateNumber);
 		}
