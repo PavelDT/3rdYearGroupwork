@@ -18,7 +18,7 @@ import group6.model.Gate;
 import group6.model.ManagementRecord;
 import group6.util.UISettings;
 
-public class GOC extends JDialog implements Observer {
+public class GOC extends JFrame implements Observer {
 
 	/**
 	 * The Ground Operations Controller Screen interface has access to the
@@ -166,7 +166,10 @@ public class GOC extends JDialog implements Observer {
 		int selectedIndex = table.getSelectedRow();
 		// makse sure the flight's status is WAITING_TO_LAND
 		// we're checking the 3nd column
-		int flightStatus = ManagementRecord.stringStatusToNumber((String) model.getValueAt(selectedIndex, 2));
+//		int flightStatus = ManagementRecord.stringStatusToNumber((String) model.getValueAt(selectedIndex, 2));
+
+		int mCode = (int)model.getValueAt(selectedIndex, 0);
+		int flightStatus = aircraftManagementDatabase.getStatus(mCode);
 		if (flightStatus != ManagementRecord.WANTING_TO_LAND) {
 			JOptionPane.showMessageDialog(null, "Flight isn't wanting to land!");
 			// prevent execution.
@@ -255,6 +258,9 @@ public class GOC extends JDialog implements Observer {
 		if (flightStatus == ManagementRecord.AWAITING_TAKEOFF) {
 			// update status to AWAITING_TAXI
 			aircraftManagementDatabase.setStatus(mCode, ManagementRecord.DEPARTING_THROUGH_LOCAL_AIRSPACE);
+			// get gate number
+			int gateOfFlight = gateInfoDatabase.getGateByFlightCode(mCode);
+			gateInfoDatabase.departed(gateOfFlight);
 		} else {
 			JOptionPane.showMessageDialog(null, "Flight not ready to take off!");
 			// prevent execution.
@@ -298,9 +304,8 @@ public class GOC extends JDialog implements Observer {
 		// loop over every management record
 		int maxRecords = aircraftManagementDatabase.maxMRs;
 		for (int i = 0; i < maxRecords; i++) {
-			// int flightStatus = aircraftManagementDatabase.getStatus(i);
 			String flightStatus = aircraftManagementDatabase.getStringStatus(i);
-			if (!flightStatus.equals("FREE")) {
+			if (!flightStatus.equals("FREE") && !flightStatus.equals("IN TRANSIT")) {
 				String code = aircraftManagementDatabase.getFlightCode(i);
 				Integer gate = gateInfoDatabase.getGateByFlightCode(i);
 				model.addRow(new Object[] { i, code, flightStatus, gate });

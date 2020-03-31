@@ -99,7 +99,6 @@ public class GateConsole extends JFrame implements Observer, ActionListener {
 			setLocation(UISettings.GateConsolePosition2);
 		}
 		setSize(UISettings.VIEW_WIDTH, UISettings.VIEW_HEIGHT);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		Container window = getContentPane();
 		window.setLayout(new BoxLayout(window, BoxLayout.PAGE_AXIS));
 

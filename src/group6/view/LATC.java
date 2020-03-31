@@ -17,7 +17,7 @@ import group6.controller.GateInfoDatabase;
 import group6.model.ManagementRecord;
 import group6.util.UISettings;
 
-public class LATC extends JDialog implements Observer {
+public class LATC extends JFrame implements Observer {
 
 	private AircraftManagementDatabase aircraftManagementDatabase;
 

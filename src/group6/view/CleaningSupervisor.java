@@ -48,8 +48,6 @@ public class CleaningSupervisor extends JFrame implements Observer {
 
 	public CleaningSupervisor(AircraftManagementDatabase aircraftManagementDatabase) {
 
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
 		this.aircraftManagementDatabase = aircraftManagementDatabase;
 		setTitle("Cleaning Supervisor View");
 		setLocation(UISettings.CleaningSupervisorPosition);

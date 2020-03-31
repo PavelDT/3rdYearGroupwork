@@ -2,7 +2,7 @@ package group6.view;
 
 import java.awt.EventQueue;
 
-import javax.swing.JDialog;
+import javax.swing.*;
 
 import group6.controller.AircraftManagementDatabase;
 import group6.model.FlightDescriptor;
@@ -13,18 +13,14 @@ import group6.model.PassengerList;
 import group6.util.RNG;
 import group6.util.UISettings;
 
-import javax.swing.SpringLayout;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
-import javax.swing.JLabel;
 import java.awt.Font;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -34,17 +30,9 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Random;
 import java.awt.event.ActionEvent;
-import javax.swing.JTextArea;
-import javax.swing.ListSelectionModel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import javax.swing.ScrollPaneConstants;
 
 /**
  * An interface to SAAMS: Radar tracking of arriving and departing aircraft, and
@@ -64,7 +52,7 @@ import javax.swing.ScrollPaneConstants;
  * @url element://model:project::SAAMS/design:view:::id3oolzcko4qme4cko4sx40
  * @url element://model:project::SAAMS/design:view:::id15rnfcko4qme4cko4swib
  */
-public class RadarTransceiver extends JDialog implements Observer {
+public class RadarTransceiver extends JFrame implements Observer {
 
 	AircraftManagementDatabase aircraftManagementDatabase;
 	private JTable table;

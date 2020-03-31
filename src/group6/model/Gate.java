@@ -71,10 +71,11 @@ public class Gate {
  *  Change status from OCCUPIED to FREE as the docked aircraft has now departed.
   * @preconditions Status must be Occupied*/
   public void departed(){
-	  
+	  System.out.println("STATUS " + status + "\t" + (status == OCCUPIED));
 	  if(status == OCCUPIED)
 	  {
-	  status = FREE;
+		  status = FREE;
+		  mCode = -1;
 	  }
   }
 

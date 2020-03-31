@@ -45,8 +45,6 @@ public class PublicInfo extends JFrame implements Observer {
 
     public PublicInfo(AircraftManagementDatabase aircraftManagementDatabase) {
 
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
         this.aircraftManagementDatabase = aircraftManagementDatabase;
         setTitle("Public Info View");
         setLocation(UISettings.PublicInfo0);

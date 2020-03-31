@@ -3,10 +3,7 @@ package group6;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 import group6.controller.AircraftManagementDatabase;
@@ -23,14 +20,13 @@ import group6.view.MaintenanceInspector;
 import group6.view.PublicInfo;
 import group6.view.RadarTransceiver;
 import group6.view.RefuellingSupervisor;
-import javax.swing.SpringLayout;
-import javax.swing.JLabel;
+
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
-public class Main extends JDialog {
+public class Main extends JFrame {
 
 	private Image radarGif;
 
@@ -39,7 +35,7 @@ public class Main extends JDialog {
 	private JButton btnQuit;
 	private JLabel lblImage;
 	private JLabel lblVersion;
-	private double versionNo = 1.15;
+	private double versionNo = 1.16;
 
 	/**
 	 * Launch the application.
