@@ -119,7 +119,6 @@ public class MaintenanceInspector extends JFrame implements Observer {
 
 	private void onRowClick() {
 		int selectedIndex = table.getSelectedRow();
-		System.out.println("zz "  + selectedIndex);
 		if (selectedIndex != -1 && (int)model.getValueAt(selectedIndex, 2) == ManagementRecord.AWAIT_REPAIR) {
 			repairedBtn.setEnabled(true);
 		} else {

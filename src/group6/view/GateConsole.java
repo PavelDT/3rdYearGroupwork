@@ -143,7 +143,7 @@ public class GateConsole extends JFrame implements Observer, ActionListener {
 		uploadPassengerListBtn.addActionListener(this);
 		uploadPassengerListBtn.setEnabled(false);
 
-		departReadyBtn = new JButton("Plane Loaded");
+		departReadyBtn = new JButton("Depart");
 		row2.add(departReadyBtn);
 		departReadyBtn.addActionListener(this);
 		departReadyBtn.setEnabled(false);
@@ -169,20 +169,15 @@ public class GateConsole extends JFrame implements Observer, ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == flightDocked) {
 			dockFlight();
-		}
-
-		else if (e.getSource() == flightUnloaded) {
+		} else if (e.getSource() == flightUnloaded) {
 			unloadFlight();
-		}
-
-		else if (e.getSource() == addPassenger) {
+		} else if (e.getSource() == addPassenger) {
 			addPassengerToFlight();
-		}
-
-		else if (e.getSource() == uploadPassengerListBtn) {
+		} else if (e.getSource() == uploadPassengerListBtn) {
 			uploadPassengerList();
+		} else if (e.getSource() == departReadyBtn) {
+			depart();
 		}
-
 	}
 
 	private void dockFlight() {
@@ -227,10 +222,16 @@ public class GateConsole extends JFrame implements Observer, ActionListener {
 		aircraftManagementDatabase.setStatus(mCode, ManagementRecord.READY_DEPART);
 	}
 
+	private void depart() {
+		int mCode = gateInfoDatabase.getFlightCodeByGate(gateNumber);
+		aircraftManagementDatabase.setStatus(mCode, ManagementRecord.AWAITING_TAXI);
+	}
+
 	//Taken from somewhere else. Will fix and update as im doing UI
 	@Override
 	public void update(Observable o, Object arg) {
 		int mCode = gateInfoDatabase.getFlightCodeByGate(gateNumber);
+		passengerList.setText("");
 		// safeguard against changing the flight's status until its correct to do so
 		if (mCode == -1) {
 			// gate shouldn't be displaying anything yet
@@ -254,7 +255,6 @@ public class GateConsole extends JFrame implements Observer, ActionListener {
 		gateStatus.setText("Flight Taxing to Gate");
 
 		// update passanger list.
-		passengerList.setText("");
 		for (PassengerDetails pd : aircraftManagementDatabase.getPassengerList(mCode).getPassengerDetails()) {
 			passengerList.append(pd.getName() + "\n");
 		}
