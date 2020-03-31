@@ -258,6 +258,14 @@ public class AircraftManagementDatabase extends Observable {
 	}
 
 	/**
+	 * Resets passenger list removing all passangers from plane
+	 * @param mCode - Management Record index
+	 */
+	public void resetPassengerList(int mCode) {
+		managementRecords[mCode].resetPassangerList();
+	}
+
+	/**
 	 * Return the Itinerary of the aircraft with the given mCode.
 	 */
 	public Itinerary getItinerary(int mCode) {

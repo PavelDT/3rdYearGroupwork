@@ -4,12 +4,10 @@ package group6.view;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 
 import group6.model.Itinerary;
 import group6.model.ManagementRecord;
@@ -65,12 +63,12 @@ public class GateConsole extends JFrame implements Observer, ActionListener {
 	private JButton flightDocked;
 	private JButton flightUnloaded;
 	private JButton addPassenger;
-	private JButton flightLoaded;
-	private JLabel flightCode;
-	private JLabel flightStatus;
-	private JLabel flightDestination;
 	private JLabel gateStatus;
 	private JTextArea gateInformation;
+	private JTextArea passengerList;
+	private JButton departReadyBtn;
+	private JButton uploadPassengerListBtn;
+
 
 	/**
 	 * Class constructor
@@ -106,7 +104,6 @@ public class GateConsole extends JFrame implements Observer, ActionListener {
 		window.setLayout(new BoxLayout(window, BoxLayout.PAGE_AXIS));
 
 		JPanel row0 = new JPanel();
-		row0.setBorder(new EmptyBorder(0, 0, 10, 0));
 		row0.setLayout(new FlowLayout());
 		JLabel gateLabel = new JLabel();
 		gateLabel.setFont(new Font(gateLabel.getName(), Font.PLAIN, 20));
@@ -114,47 +111,50 @@ public class GateConsole extends JFrame implements Observer, ActionListener {
 		row0.add(gateLabel);
 
 		JPanel row1 = new JPanel();
-		row1.setLayout(new GridLayout());
+		row1.setLayout(new FlowLayout());
+		gateInformation = new JTextArea(3,30);
+		gateInformation.setEditable(false);
+		JScrollPane scroll = new JScrollPane(gateInformation);
+
+		gateStatus = new JLabel();
+		row1.add(scroll, null);
+		row1.add(gateStatus);
+
+		JPanel row2 = new JPanel();
+		row2.setLayout(new GridLayout());
 
 		flightDocked = new JButton("Plane Docked");
-		row1.add(flightDocked);
+		row2.add(flightDocked);
 		flightDocked.addActionListener(this);
 		flightDocked.setEnabled(false);
 
 		flightUnloaded = new JButton("Plane Unloaded");
-		row1.add(flightUnloaded);
+		row2.add(flightUnloaded);
 		flightUnloaded.addActionListener(this);
 		flightUnloaded.setEnabled(false);
 
 		addPassenger = new JButton("Add Passenger");
-		row1.add(addPassenger);
+		row2.add(addPassenger);
 		addPassenger.addActionListener(this);
 		addPassenger.setEnabled(false);
 
-		flightLoaded = new JButton("Plane Loaded");
-		row1.add(flightLoaded);
-		flightLoaded.addActionListener(this);
-		flightLoaded.setEnabled(false);
+		uploadPassengerListBtn = new JButton("Upload P. List");
+		row2.add(uploadPassengerListBtn);
+		uploadPassengerListBtn.addActionListener(this);
+		uploadPassengerListBtn.setEnabled(false);
 
-		JPanel row2 = new JPanel();
-		row2.setLayout(new FlowLayout());
-		gateInformation = new JTextArea(5,20);
-		gateInformation.setEditable(false);
+		departReadyBtn = new JButton("Plane Loaded");
+		row2.add(departReadyBtn);
+		departReadyBtn.addActionListener(this);
+		departReadyBtn.setEnabled(false);
 
-		JScrollPane scroll = new JScrollPane(gateInformation);
-		row2.add(scroll, null);
 
 		JPanel row3 = new JPanel();
 		row3.setLayout(new FlowLayout());
 
-		flightCode = new JLabel();
-		row3.add(flightCode);
-		flightStatus = new JLabel();
-		row3.add(flightStatus);
-		flightDestination = new JLabel();
-		row3.add(flightDestination);
-		gateStatus = new JLabel();
-		row3.add(gateStatus);
+		passengerList = new JTextArea(3,30);
+		passengerList.setEditable(false);
+		row3.add(passengerList);
 
 		window.add(row0);
 		window.add(row1);
@@ -179,8 +179,8 @@ public class GateConsole extends JFrame implements Observer, ActionListener {
 			addPassengerToFlight();
 		}
 
-		else if (e.getSource() == flightLoaded) {
-			loadFlight();
+		else if (e.getSource() == uploadPassengerListBtn) {
+			uploadPassengerList();
 		}
 
 	}
@@ -202,12 +202,9 @@ public class GateConsole extends JFrame implements Observer, ActionListener {
 	private void unloadFlight() {
 		int mCode = gateInfoDatabase.getFlightCodeByGate(gateNumber);
 		aircraftManagementDatabase.setStatus(mCode, ManagementRecord.READY_CLEAN_AND_MAINT);
+
 		// clear the passenger list.
-		// Java is pass-by-value where the value passes is a reference to the object
-		// so essentially I get back a reference to the passengerList thus i can reset
-		// the passenger list this way.
-		PassengerList passengerList = aircraftManagementDatabase.getPassengerList(mCode);
-		passengerList = new PassengerList();
+		aircraftManagementDatabase.resetPassengerList(mCode);
 
 		String flightCode = aircraftManagementDatabase.getFlightCode(mCode);
 
@@ -219,18 +216,15 @@ public class GateConsole extends JFrame implements Observer, ActionListener {
 	}
 
 	private void addPassengerToFlight() {
-		// UI THIS
 		PassengerDetails passengerName = new PassengerDetails(JOptionPane.showInputDialog("Passenger Name"));
-		int[] mCodes = aircraftManagementDatabase.getWithStatus(14);
-		int mCode = mCodes[0];
+		int mCode = gateInfoDatabase.getFlightCodeByGate(gateNumber);
 		aircraftManagementDatabase.addPassenger(mCode, passengerName);
+		// no status update to be done, multiple passangers can be added.
 	}
 
-	private void loadFlight() {
-		// UI THIS
-		aircraftManagementDatabase.getWithStatus(14);
-		// todo -- rentriduce this but locally to this funtion
-		// updateGateStatus();
+	private void uploadPassengerList() {
+		int mCode = gateInfoDatabase.getFlightCodeByGate(gateNumber);
+		aircraftManagementDatabase.setStatus(mCode, ManagementRecord.READY_DEPART);
 	}
 
 	//Taken from somewhere else. Will fix and update as im doing UI
@@ -244,7 +238,10 @@ public class GateConsole extends JFrame implements Observer, ActionListener {
 			return;
 		}
 		int flightStatus = aircraftManagementDatabase.getStatus(mCode);
-		if (flightStatus != ManagementRecord.TAXIING && flightStatus != ManagementRecord.UNLOADING) {
+		if (flightStatus != ManagementRecord.TAXIING &&
+			flightStatus != ManagementRecord.UNLOADING &&
+			flightStatus != ManagementRecord.READY_PASSENGERS &&
+			flightStatus != ManagementRecord.READY_DEPART) {
 			// gate shouldn't be displaying anything yet
 			resetGate();
 			return;
@@ -256,18 +253,40 @@ public class GateConsole extends JFrame implements Observer, ActionListener {
 		gateInformation.setText("Flight " + flightCode + "From " + i.getFrom());
 		gateStatus.setText("Flight Taxing to Gate");
 
+		// update passanger list.
+		passengerList.setText("");
+		for (PassengerDetails pd : aircraftManagementDatabase.getPassengerList(mCode).getPassengerDetails()) {
+			passengerList.append(pd.getName() + "\n");
+		}
+
 		if (flightStatus == ManagementRecord.TAXIING) {
 			// flight is taxing enable staff to dock the flight
 			flightDocked.setEnabled(true);
 			flightUnloaded.setEnabled(false);
 			addPassenger.setEnabled(false);
-			flightLoaded.setEnabled(false);
+			uploadPassengerListBtn.setEnabled(false);
+			departReadyBtn.setEnabled(false);
 		} else if (flightStatus == ManagementRecord.UNLOADING) {
 			// flight is unloading, enable staff to set the flight as unloaded
 			flightDocked.setEnabled(false);
 			flightUnloaded.setEnabled(true);
 			addPassenger.setEnabled(false);
-			flightLoaded.setEnabled(false);
+			uploadPassengerListBtn.setEnabled(false);
+			departReadyBtn.setEnabled(false);
+		} else if (flightStatus == ManagementRecord.READY_PASSENGERS) {
+			// flight is unloading, enable staff to set the flight as unloaded
+			flightDocked.setEnabled(false);
+			flightUnloaded.setEnabled(false);
+			addPassenger.setEnabled(true);
+			uploadPassengerListBtn.setEnabled(true);
+			departReadyBtn.setEnabled(false);
+		} else if (flightStatus == ManagementRecord.READY_DEPART) {
+			// flight is unloading, enable staff to set the flight as unloaded
+			flightDocked.setEnabled(false);
+			flightUnloaded.setEnabled(false);
+			addPassenger.setEnabled(false);
+			uploadPassengerListBtn.setEnabled(false);
+			departReadyBtn.setEnabled(true);
 		} else {
 			// disable everything, flight status shouldn't be manipulated by the gate
 			resetGate();
@@ -281,7 +300,8 @@ public class GateConsole extends JFrame implements Observer, ActionListener {
 		flightDocked.setEnabled(false);
 		flightUnloaded.setEnabled(false);
 		addPassenger.setEnabled(false);
-		flightLoaded.setEnabled(false);
+		uploadPassengerListBtn.setEnabled(false);
+		departReadyBtn.setEnabled(false);
 
 		gateInformation.setText("");
 		gateStatus.setText("Gate Closed");

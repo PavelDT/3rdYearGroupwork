@@ -384,6 +384,10 @@ public class ManagementRecord {
     return passengerList;
   }
 
+  public void resetPassangerList() {
+      passengerList = new PassengerList();
+  }
+
 /** Return the aircraft's Itinerary.*/
   public Itinerary getItinerary(){
     return itinerary;
