@@ -99,10 +99,9 @@ public class GOC extends JDialog implements Observer {
 		model.addColumn("AIRCRAFT");
 		model.addColumn("STATUS");
 		model.addColumn("GATE");
-		
 
-		columnModel.getColumn(0).setPreferredWidth(1);
-		columnModel.getColumn(1).setPreferredWidth(5);
+		columnModel.getColumn(0).setPreferredWidth(0);
+		columnModel.getColumn(1).setPreferredWidth(0);
 		columnModel.getColumn(2).setPreferredWidth(120);
 		columnModel.getColumn(3).setPreferredWidth(5);
 		scrollPane.setViewportView(table);
@@ -131,21 +130,36 @@ public class GOC extends JDialog implements Observer {
 		gatesComboBox.addItem(0);
 		gatesComboBox.addItem(1);
 		gatesComboBox.addItem(2);
-		
+
 		sl_panel.putConstraint(SpringLayout.WEST, gatesComboBox, 6, SpringLayout.EAST, btnAssignGate);
 		sl_panel.putConstraint(SpringLayout.SOUTH, gatesComboBox, 0, SpringLayout.SOUTH, btnGrantGroundClearance);
 		panel.add(gatesComboBox);
-
-	
 		
+		JButton taxiBtn = new JButton("Taxi");
+		taxiBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//handleTaxi()
+			}
+		});
+		sl_panel.putConstraint(SpringLayout.NORTH, taxiBtn, 6, SpringLayout.SOUTH, btnGrantGroundClearance);
+		sl_panel.putConstraint(SpringLayout.WEST, taxiBtn, 0, SpringLayout.WEST, scrollPane);
+		panel.add(taxiBtn);
+		
+		JButton takeOffBtn = new JButton("Takeoff");
+		takeOffBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//handleTakeOff()
+			}
+		});
+		sl_panel.putConstraint(SpringLayout.SOUTH, takeOffBtn, 0, SpringLayout.SOUTH, taxiBtn);
+		sl_panel.putConstraint(SpringLayout.EAST, takeOffBtn, 0, SpringLayout.EAST, btnGrantGroundClearance);
+		panel.add(takeOffBtn);
 
 		aircraftManagementDatabase.addObserver(this);
 		gateInfoDatabase.addObserver(this);
-		
+
 		setVisible(true);
 	}
-
-
 
 	/**
 	 * Grants permission for a flight to land
@@ -245,64 +259,3 @@ public class GOC extends JDialog implements Observer {
 	}
 }
 
-
-//JPanel row1 = new JPanel();
-//row1.setLayout(new BorderLayout());
-//JScrollPane tableScroll = new JScrollPane(table);
-//row1.add(tableScroll);
-//row1.setBorder(new EmptyBorder(10, 10, 10, 10));
-//
-//
-//// for allowing a flight to land
-//JPanel row2 = new JPanel();
-//row2.setLayout(new FlowLayout());
-//Button grantLandingPermissionBtn = new Button("Grant Ground Clearance");
-//grantLandingPermissionBtn.setSize(200, 50);
-//grantLandingPermissionBtn.addActionListener(new ActionListener() {
-//	public void actionPerformed(ActionEvent e) {
-//		grantLandingPermission();
-//	}
-//});
-//row2.add(grantLandingPermissionBtn);
-//
-//// For assigning a gate to a flight
-//JPanel row3 = new JPanel();
-//row3.setLayout(new FlowLayout());
-//// gate selection box
-//gatesComboBox = new JComboBox<Integer>();
-//gatesComboBox.addItem(1);
-//gatesComboBox.addItem(2);
-//gatesComboBox.addItem(3);
-//// button for assigning gate
-//Button assignGateBtn = new Button("Assign Gate");
-//assignGateBtn.addActionListener(new ActionListener() {
-//	public void actionPerformed(ActionEvent e) {
-//		assignGate();
-//	}
-//});
-//assignGateBtn.setSize(200, 50);
-//
-//Container contentPane = getContentPane();
-//contentPane.setLayout(new BorderLayout());
-//
-//// group the combo box and assignGate button
-//row3.add(assignGateBtn);
-//row3.add(gatesComboBox);
-//
-//// add top level panel for all components
-//JPanel p = new JPanel();
-//p.add(row1);
-//p.add(row2);
-//p.add(row3);
-//BoxLayout boxLayout = new BoxLayout(p, BoxLayout.PAGE_AXIS);
-//p.setLayout(boxLayout);
-//
-//contentPane.add(p);
-//
-//// ensure we observe the singleton
-//aircraftManagementDatabase.addObserver(this);
-//gateInfoDatabase.addObserver(this);
-//
-//setVisible(true);
-//
-//setBackground(Color.BLACK);
