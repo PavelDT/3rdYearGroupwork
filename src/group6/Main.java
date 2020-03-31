@@ -20,6 +20,7 @@ import group6.view.GOC;
 import group6.view.GateConsole;
 import group6.view.LATC;
 import group6.view.MaintenanceInspector;
+import group6.view.PublicInfo;
 import group6.view.RadarTransceiver;
 import group6.view.RefuellingSupervisor;
 import javax.swing.SpringLayout;
@@ -120,6 +121,7 @@ public class Main extends JDialog {
 		new CleaningSupervisor(aircraftManagementDatabase);
 		new RefuellingSupervisor(aircraftManagementDatabase);
 		new RadarTransceiver(aircraftManagementDatabase);
+		new PublicInfo(aircraftManagementDatabase);
 		for (int gateNumber = 0; gateNumber < GateInfoDatabase.maxGateNumber; gateNumber++) {
 			new GateConsole(aircraftManagementDatabase, gateInfoDatabase, gateNumber);
 		}

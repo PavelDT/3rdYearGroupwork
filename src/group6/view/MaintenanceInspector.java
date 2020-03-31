@@ -9,7 +9,6 @@ import javax.swing.table.DefaultTableModel;
 
 import group6.controller.AircraftManagementDatabase;
 import group6.model.ManagementRecord;
-import group6.util.JTableUtil;
 import group6.util.UISettings;
 
 

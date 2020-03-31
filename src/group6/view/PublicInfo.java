@@ -4,6 +4,7 @@ package group6.view;
 
 import group6.controller.AircraftManagementDatabase;
 import group6.model.ManagementRecord;
+import group6.util.UISettings;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,82 +12,96 @@ import java.util.*;
 import java.util.List;
 
 /**
- * An interface to SAAMS:
- * Public Information Screen:
- * Display of useful information about aircraft.
- * This class registers as an observer of the AircraftManagementDatabase, and is notified whenever any change occurs in that <<model>> element.
- * See written documentation.
+ * An interface to SAAMS: Public Information Screen: Display of useful
+ * information about aircraft. This class registers as an observer of the
+ * AircraftManagementDatabase, and is notified whenever any change occurs in
+ * that <<model>> element. See written documentation.
  *
  * @stereotype boundary/view
  * @url element://model:project::SAAMS/design:view:::id28ykdcko4qme4cko4sx0e
  * @url element://model:project::SAAMS/design:view:::id15rnfcko4qme4cko4swib
  */
 public class PublicInfo extends JFrame implements Observer {
-    /**
-     * Each Public Information Screen interface has access to the AircraftManagementDatabase.
-     *
-     * @supplierCardinality 1
-     * @clientCardinality 0..*
-     * @label accesses/observes
-     * @directed
-     */
-    private AircraftManagementDatabase aircraftManagementDatabase;
+	/**
+	 * Each Public Information Screen interface has access to the
+	 * AircraftManagementDatabase.
+	 *
+	 * @supplierCardinality 1
+	 * @clientCardinality 0..*
+	 * @label accesses/observes
+	 * @directed
+	 */
+	private AircraftManagementDatabase aircraftManagementDatabase;
 
-    public PublicInfo(AircraftManagementDatabase aircraftManagementDatabase) {
-        JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	public PublicInfo(AircraftManagementDatabase aircraftManagementDatabase) {
+		JFrame frame = new JFrame();
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        this.aircraftManagementDatabase = aircraftManagementDatabase;
-        setTitle("Public Info View");
-        setLocation(150, 150);
-        setSize(350, 150);
-        Container window = getContentPane();
-        window.setLayout(new FlowLayout());
+		this.aircraftManagementDatabase = aircraftManagementDatabase;
+		setTitle("Public Info View");
+		setLocation(UISettings.PublicInfo);
+		setSize(380, 256);
 
-        int[] waitingToLand = this.aircraftManagementDatabase.getWithStatus(ManagementRecord.WANTING_TO_LAND);
-        int[] groundClearanceGranted = this.aircraftManagementDatabase.getWithStatus(ManagementRecord.GROUND_CLEARANCE_GRANTED);
-        int[]  landing = this.aircraftManagementDatabase.getWithStatus(ManagementRecord.LANDING);
+		JPanel panel = new JPanel();
+		getContentPane().add(panel, BorderLayout.CENTER);
+		SpringLayout sl_panel = new SpringLayout();
+		panel.setLayout(sl_panel);
 
-        List<String> aircraftCodes = new ArrayList<>();
-        addAircraftCodes(0, this.aircraftManagementDatabase, waitingToLand, aircraftCodes);
-        addAircraftCodes(aircraftCodes.size() - 1, this.aircraftManagementDatabase, groundClearanceGranted, aircraftCodes);
-        addAircraftCodes(aircraftCodes.size() - 1, this.aircraftManagementDatabase, landing, aircraftCodes);
+		JTextArea textArea = new JTextArea();
+		sl_panel.putConstraint(SpringLayout.NORTH, textArea, 10, SpringLayout.NORTH, panel);
+		sl_panel.putConstraint(SpringLayout.WEST, textArea, 10, SpringLayout.WEST, panel);
+		sl_panel.putConstraint(SpringLayout.SOUTH, textArea, 207, SpringLayout.NORTH, panel);
+		sl_panel.putConstraint(SpringLayout.EAST, textArea, 354, SpringLayout.WEST, panel);
+		panel.add(textArea);
 
-        Vector<Vector> data = new Vector<>();
-        for(int i=0; i<aircraftCodes.size(); i++) {
-            Vector<String> row  = new Vector<>();
-            row.addElement(aircraftCodes.get(i));
-            data.addElement(row);
-        }
+		setVisible(true);
 
-        Vector<String> columnNames = new Vector<>();
-        columnNames.addElement("Flight's Landing");
+	}
 
-        JTable table = new JTable(data, columnNames);
-
-        JScrollPane aircraftScroll = new JScrollPane(table);
-        frame.add(aircraftScroll, BorderLayout.CENTER);
-        frame.setSize(500, 500);
-        frame.setVisible(true);
-        aircraftScroll.setPreferredSize(new Dimension(350, 150));
-    }
-
-    private void addAircraftCodes(int index, AircraftManagementDatabase aircraftManagementDatabase, int[]  mrs, List<String> aircraftCodes) {
-        for (int i = index, j = 0; j < mrs.length; i++, j++) {
-            aircraftCodes.add(aircraftManagementDatabase.getFlightCode(mrs[j]));
-        }
-    }
-
-    @Override
-    public void update(Observable o, Object a) {
-        AircraftManagementDatabase aircraftDatabase = null;
-        try {
-            aircraftDatabase = (AircraftManagementDatabase) a;
-        } catch (ClassCastException e) {
-            System.out.println(e.getMessage());
-        }
-        if (aircraftDatabase != null) {
-            aircraftManagementDatabase = aircraftDatabase;
-        }
-    }
+	@Override
+	public void update(Observable o, Object a) {
+		AircraftManagementDatabase aircraftDatabase = null;
+		try {
+			aircraftDatabase = (AircraftManagementDatabase) a;
+		} catch (ClassCastException e) {
+			System.out.println(e.getMessage());
+		}
+		if (aircraftDatabase != null) {
+			aircraftManagementDatabase = aircraftDatabase;
+		}
+	}
 }
+
+//private void addAircraftCodes(int index, AircraftManagementDatabase aircraftManagementDatabase, int[] mrs,
+//		List<String> aircraftCodes) {
+//	for (int i = index, j = 0; j < mrs.length; i++, j++) {
+//		aircraftCodes.add(aircraftManagementDatabase.getFlightCode(mrs[j]));
+//	}
+//}
+
+//int[] waitingToLand = this.aircraftManagementDatabase.getWithStatus(ManagementRecord.WANTING_TO_LAND);
+//int[] groundClearanceGranted = this.aircraftManagementDatabase.getWithStatus(ManagementRecord.GROUND_CLEARANCE_GRANTED);
+//int[]  landing = this.aircraftManagementDatabase.getWithStatus(ManagementRecord.LANDING);
+//
+//List<String> aircraftCodes = new ArrayList<>();
+//addAircraftCodes(0, this.aircraftManagementDatabase, waitingToLand, aircraftCodes);
+//addAircraftCodes(aircraftCodes.size() - 1, this.aircraftManagementDatabase, groundClearanceGranted, aircraftCodes);
+//addAircraftCodes(aircraftCodes.size() - 1, this.aircraftManagementDatabase, landing, aircraftCodes);
+//
+//Vector<Vector> data = new Vector<>();
+//for(int i=0; i<aircraftCodes.size(); i++) {
+//    Vector<String> row  = new Vector<>();
+//    row.addElement(aircraftCodes.get(i));
+//    data.addElement(row);
+//}
+//
+//Vector<String> columnNames = new Vector<>();
+//columnNames.addElement("Flight's Landing");
+//
+//JTable table = new JTable(data, columnNames);
+//
+//JScrollPane aircraftScroll = new JScrollPane(table);
+//frame.add(aircraftScroll, BorderLayout.CENTER);
+//frame.setSize(500, 500);
+//frame.setVisible(true);
+//aircraftScroll.setPreferredSize(new Dimension(350, 150));

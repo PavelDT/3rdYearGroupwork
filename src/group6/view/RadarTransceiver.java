@@ -17,6 +17,7 @@ import javax.swing.SpringLayout;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import javax.swing.JLabel;
@@ -26,18 +27,23 @@ import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Random;
 import java.awt.event.ActionEvent;
 import javax.swing.JTextArea;
+import javax.swing.ListSelectionModel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
 
 /**
  * An interface to SAAMS: Radar tracking of arriving and departing aircraft, and
@@ -163,9 +169,10 @@ public class RadarTransceiver extends JDialog implements Observer {
 		model.addColumn("DESCRIPTION");
 		model.addColumn("TIME");
 
-		columnModel.getColumn(0).setPreferredWidth(5);
-		columnModel.getColumn(1).setPreferredWidth(100);
-		columnModel.getColumn(2).setPreferredWidth(5);
+		columnModel.getColumn(0).setPreferredWidth(1);
+		columnModel.getColumn(1).setPreferredWidth(5);
+		columnModel.getColumn(2).setPreferredWidth(120);
+		columnModel.getColumn(3).setPreferredWidth(5);
 
 		table.setModel(model);
 
@@ -173,7 +180,30 @@ public class RadarTransceiver extends JDialog implements Observer {
 
 		setVisible(true);
 
+		btnLeave.setEnabled(false);
+		btnViewPassenger.setEnabled(false);
+
 		aircraftManagementDatabase.addObserver(this);
+
+		//TODO change colours of rows if planes are just passing by or in transit
+		
+		table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+			public void valueChanged(ListSelectionEvent e) {
+
+				ListSelectionModel lsm = (ListSelectionModel) e.getSource();
+
+			
+				if (!lsm.isSelectionEmpty()) {
+					btnLeave.setEnabled(true);
+					btnViewPassenger.setEnabled(true);
+
+				} else {
+					btnLeave.setEnabled(false);
+					btnViewPassenger.setEnabled(false);
+				}
+
+			}
+		});
 	}
 
 	/**
@@ -199,7 +229,7 @@ public class RadarTransceiver extends JDialog implements Observer {
 
 		// fetch the first value of the currently selected row
 		// which represents the id of the flight aka mCode
-		int mCode = (int)model.getValueAt(table.getSelectedRow(), 0);
+		int mCode = (int) model.getValueAt(table.getSelectedRow(), 0);
 		aircraftManagementDatabase.radarLostContact(mCode);
 	}
 
@@ -214,7 +244,7 @@ public class RadarTransceiver extends JDialog implements Observer {
 
 		// fetch the first value of the currently selected row
 		// which represents the id of the flight aka mCode
-		int mCode = (int)model.getValueAt(table.getSelectedRow(), 0);
+		int mCode = (int) model.getValueAt(table.getSelectedRow(), 0);
 		// remove details from previous flights
 		textArea.setText("");
 
@@ -248,7 +278,10 @@ public class RadarTransceiver extends JDialog implements Observer {
 
 			// problem, all the times get updated
 
+			
 			model.addRow(new Object[] { i, fd.getFlightCode(), fd.toString(), formatter.format(date) });
+		
+			
 		}
 	}
 }

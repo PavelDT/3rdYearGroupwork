@@ -80,6 +80,8 @@ public class GOC extends JDialog implements Observer {
 		model.addColumn("STATUS");
 		model.addColumn("GATE");
 		table.setModel(model);
+		
+	
 
 
 		JPanel row1 = new JPanel();
@@ -140,6 +142,8 @@ public class GOC extends JDialog implements Observer {
 		gateInfoDatabase.addObserver(this);
 
 		setVisible(true);
+		
+		setBackground(Color.BLACK);
 	}
 
 	/**
@@ -213,6 +217,7 @@ public class GOC extends JDialog implements Observer {
 
 	@Override
 	public void update(Observable observable, Object o) {
+		
 		model.setRowCount(0);
 
 		// loop over every management record
