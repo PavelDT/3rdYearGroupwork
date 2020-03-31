@@ -157,16 +157,8 @@ public class MaintenanceInspector extends JFrame implements Observer {
 		int selectedRowIndex = table.getSelectedRow();
 		// the the id of the managent record representing the flight
 		int mCode = (int)model.getValueAt(selectedRowIndex, 0);
-		int status = aircraftManagementDatabase.getStatus(mCode);
-
-		if (status == ManagementRecord.READY_CLEAN_AND_MAINT) {
-			// faults were found, flight hasn't yet been cleaned
-			aircraftManagementDatabase.setStatus(mCode, ManagementRecord.FAULTY_AWAIT_CLEAN);
-		} else if (status == ManagementRecord.CLEAN_AWAIT_MAINT) {
-			// faults found, flight is already clean
-			// set flight to be repaired
-			aircraftManagementDatabase.setStatus(mCode, ManagementRecord.AWAIT_REPAIR);
-		}
+		// this is for finding faults
+		aircraftManagementDatabase.faultsFound(mCode, "Some stuff broke - RNG THIS");
 	}
 
 	private void repaired() {

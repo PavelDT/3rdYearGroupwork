@@ -69,13 +69,10 @@ public class RadarTransceiver extends JDialog implements Observer {
 	AircraftManagementDatabase aircraftManagementDatabase;
 	private JTable table;
 	private static DefaultTableModel model;
-	private JTable table_1;
 	private JButton btnEnter;
 	private JButton btnLeave;
 	private JButton btnViewPassenger;
 	private JScrollPane scrollPane;
-	Random random = new Random();
-	private int rows = 0;
 	private JTextArea textArea;
 
 	public RadarTransceiver(AircraftManagementDatabase aircraftManagementDatabase) {
@@ -193,21 +190,20 @@ public class RadarTransceiver extends JDialog implements Observer {
 
 		//TODO change colours of rows if planes are just passing by or in transit
 		
-		table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-			public void valueChanged(ListSelectionEvent e) {
+		table.getSelectionModel().addListSelectionListener(e -> {
+			ListSelectionModel lsm = (ListSelectionModel) e.getSource();
 
-				ListSelectionModel lsm = (ListSelectionModel) e.getSource();
-
-			
-				if (!lsm.isSelectionEmpty()) {
+			if (!lsm.isSelectionEmpty()) {
+				int mCode = (int)model.getValueAt(table.getSelectedRow(), 0);
+				if (aircraftManagementDatabase.getStatus(mCode) == ManagementRecord.DEPARTING_THROUGH_LOCAL_AIRSPACE ||
+					aircraftManagementDatabase.getStatus(mCode) == ManagementRecord.IN_TRANSIT) {
 					btnLeave.setEnabled(true);
-					btnViewPassenger.setEnabled(true);
-
-				} else {
-					btnLeave.setEnabled(false);
-					btnViewPassenger.setEnabled(false);
 				}
+				btnViewPassenger.setEnabled(true);
 
+			} else {
+				btnLeave.setEnabled(false);
+				btnViewPassenger.setEnabled(false);
 			}
 		});
 	}
@@ -218,8 +214,10 @@ public class RadarTransceiver extends JDialog implements Observer {
 	 */
 	private void enterAirspace() {
 
-		aircraftManagementDatabase.radarDetect(RNG.generateFlightDescriptor());
-
+		boolean foundSlot = aircraftManagementDatabase.radarDetect(RNG.generateFlightDescriptor());
+		if (!foundSlot) {
+			JOptionPane.showMessageDialog(null, "There are no free management records.\nCannot accept flight!");
+		}
 	}
 
 	// THIS NEEDS TO LOOP THROUGH THE AircraftManagementDatabase AND FIND THE FLIGHT
@@ -237,6 +235,7 @@ public class RadarTransceiver extends JDialog implements Observer {
 		// which represents the id of the flight aka mCode
 		int mCode = (int) model.getValueAt(table.getSelectedRow(), 0);
 		aircraftManagementDatabase.radarLostContact(mCode);
+		textArea.setText("");
 	}
 
 	// NEED TO GET THE PASSENGERLIST FROM THE SELECTED ROW OF THE JLIST AND DISPLAY
@@ -283,11 +282,21 @@ public class RadarTransceiver extends JDialog implements Observer {
 			Date date = new Date();
 
 			// problem, all the times get updated
-
-			
 			model.addRow(new Object[] { i, fd.getFlightCode(), fd.toString(), formatter.format(date) });
-		
-			
+		}
+
+		for (int i : aircraftManagementDatabase.getWithStatus(ManagementRecord.DEPARTING_THROUGH_LOCAL_AIRSPACE)) {
+
+			String flightCode = aircraftManagementDatabase.getFlightCode(i);
+			Itinerary itinerary = aircraftManagementDatabase.getItinerary(i);
+			PassengerList passengerList = aircraftManagementDatabase.getPassengerList(i);
+
+			FlightDescriptor fd = new FlightDescriptor(flightCode, itinerary, passengerList);
+
+			SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+			Date date = new Date();
+
+			model.addRow(new Object[] { i, fd.getFlightCode(), fd.toString(), formatter.format(date) });
 		}
 	}
 }

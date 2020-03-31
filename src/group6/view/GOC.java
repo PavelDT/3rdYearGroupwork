@@ -40,6 +40,8 @@ public class GOC extends JDialog implements Observer {
 	private DefaultTableModel model;
 	private JButton btnAssignGate;
 	private JButton btnGrantGroundClearance;
+	private JButton takeOffBtn;
+	private JButton taxiBtn;
 	private JPanel panel;
 	private JScrollPane scrollPane;
 
@@ -93,6 +95,8 @@ public class GOC extends JDialog implements Observer {
 		table.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		table.getTableHeader().setReorderingAllowed(false);
 		table.setModel(model);
+		// add listener for when a row is clicked in the table
+		table.getSelectionModel().addListSelectionListener(event -> onRowClick());
 		TableColumnModel columnModel = table.getColumnModel();
 
 		model.addColumn("ID");
@@ -107,21 +111,13 @@ public class GOC extends JDialog implements Observer {
 		scrollPane.setViewportView(table);
 
 		btnGrantGroundClearance = new JButton("Grant Ground Clearance");
-		btnGrantGroundClearance.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				grantLandingPermission();
-			}
-		});
+		btnGrantGroundClearance.addActionListener(e -> grantLandingPermission());
 		sl_panel.putConstraint(SpringLayout.NORTH, btnGrantGroundClearance, 14, SpringLayout.SOUTH, scrollPane);
 		sl_panel.putConstraint(SpringLayout.WEST, btnGrantGroundClearance, 0, SpringLayout.WEST, scrollPane);
 		panel.add(btnGrantGroundClearance);
 
 		btnAssignGate = new JButton("Assign Gate");
-		btnAssignGate.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				assignGate();
-			}
-		});
+		btnAssignGate.addActionListener(e -> assignGate());
 		sl_panel.putConstraint(SpringLayout.NORTH, btnAssignGate, 0, SpringLayout.NORTH, btnGrantGroundClearance);
 		sl_panel.putConstraint(SpringLayout.WEST, btnAssignGate, 46, SpringLayout.EAST, btnGrantGroundClearance);
 		panel.add(btnAssignGate);
@@ -134,29 +130,24 @@ public class GOC extends JDialog implements Observer {
 		sl_panel.putConstraint(SpringLayout.WEST, gatesComboBox, 6, SpringLayout.EAST, btnAssignGate);
 		sl_panel.putConstraint(SpringLayout.SOUTH, gatesComboBox, 0, SpringLayout.SOUTH, btnGrantGroundClearance);
 		panel.add(gatesComboBox);
-		
-		JButton taxiBtn = new JButton("Taxi");
-		taxiBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				//handleTaxi()
-			}
-		});
+
+		taxiBtn = new JButton("Taxi");
+		taxiBtn.addActionListener(e -> taxiFlight());
 		sl_panel.putConstraint(SpringLayout.NORTH, taxiBtn, 6, SpringLayout.SOUTH, btnGrantGroundClearance);
 		sl_panel.putConstraint(SpringLayout.WEST, taxiBtn, 0, SpringLayout.WEST, scrollPane);
 		panel.add(taxiBtn);
 		
-		JButton takeOffBtn = new JButton("Takeoff");
-		takeOffBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				//handleTakeOff()
-			}
-		});
+		takeOffBtn = new JButton("Takeoff");
+		takeOffBtn.addActionListener(e -> takeOff());
 		sl_panel.putConstraint(SpringLayout.SOUTH, takeOffBtn, 0, SpringLayout.SOUTH, taxiBtn);
 		sl_panel.putConstraint(SpringLayout.EAST, takeOffBtn, 0, SpringLayout.EAST, btnGrantGroundClearance);
 		panel.add(takeOffBtn);
 
 		aircraftManagementDatabase.addObserver(this);
 		gateInfoDatabase.addObserver(this);
+
+		// disable all controls until a row is selected from the table
+		disableAll();
 
 		setVisible(true);
 	}
@@ -231,6 +222,74 @@ public class GOC extends JDialog implements Observer {
 		}
 	}
 
+	private void taxiFlight() {
+		if (table.getSelectionModel().isSelectionEmpty() == true) {
+			JOptionPane.showMessageDialog(null, "Please select a flight!");
+			// prevent execution.
+			return;
+		}
+
+		int selectedIndex = table.getSelectedRow();
+		int flightStatus = ManagementRecord.stringStatusToNumber((String) model.getValueAt(selectedIndex, 2));
+		int mCode = (int) model.getValueAt(selectedIndex, 0);
+		if (flightStatus == ManagementRecord.AWAITING_TAXI) {
+			// update status to AWAITING_TAXI
+			aircraftManagementDatabase.setStatus(mCode, ManagementRecord.AWAITING_TAKEOFF);
+		} else {
+			JOptionPane.showMessageDialog(null, "Flight not ready to taxi!");
+			// prevent execution.
+			return;
+		}
+	}
+
+	private void takeOff() {
+		if (table.getSelectionModel().isSelectionEmpty() == true) {
+			JOptionPane.showMessageDialog(null, "Please select a flight!");
+			// prevent execution.
+			return;
+		}
+
+		int selectedIndex = table.getSelectedRow();
+		int flightStatus = ManagementRecord.stringStatusToNumber((String) model.getValueAt(selectedIndex, 2));
+		int mCode = (int) model.getValueAt(selectedIndex, 0);
+		if (flightStatus == ManagementRecord.AWAITING_TAKEOFF) {
+			// update status to AWAITING_TAXI
+			aircraftManagementDatabase.setStatus(mCode, ManagementRecord.DEPARTING_THROUGH_LOCAL_AIRSPACE);
+		} else {
+			JOptionPane.showMessageDialog(null, "Flight not ready to take off!");
+			// prevent execution.
+			return;
+		}
+	}
+
+	private void onRowClick() {
+		disableAll();
+
+		// enable buttons based on flight status
+		int selectedIndex = table.getSelectedRow();
+		if (selectedIndex == -1) {
+			// no item selected, prevent any buttons from being used.
+			return;
+		}
+
+		int planeStatus = aircraftManagementDatabase.getStatus((int) model.getValueAt(selectedIndex, 0));
+		System.out.println(planeStatus);
+		System.out.println(planeStatus);
+		System.out.println(planeStatus);
+
+		if (planeStatus == ManagementRecord.WANTING_TO_LAND) {
+			System.out.println("AAA");
+			btnGrantGroundClearance.setEnabled(true);
+		} else if (planeStatus == ManagementRecord.LANDED) {
+			btnAssignGate.setEnabled(true);
+			gatesComboBox.setEnabled(true);
+		} else if (planeStatus == ManagementRecord.AWAITING_TAXI) {
+			taxiBtn.setEnabled(true);
+		} else if (planeStatus == ManagementRecord.AWAITING_TAKEOFF) {
+			takeOffBtn.setEnabled(true);
+		}
+	}
+
 	@Override
 	public void update(Observable observable, Object o) {
 
@@ -255,7 +314,14 @@ public class GOC extends JDialog implements Observer {
 				gatesComboBox.addItem(i);
 			}
 		}
+	}
 
+	public void disableAll() {
+		btnGrantGroundClearance.setEnabled(false);
+		btnAssignGate.setEnabled(false);
+		gatesComboBox.setEnabled(false);
+		taxiBtn.setEnabled(false);
+		takeOffBtn.setEnabled(false);
 	}
 }
 

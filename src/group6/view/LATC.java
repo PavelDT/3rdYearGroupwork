@@ -63,22 +63,14 @@ public class LATC extends JDialog implements Observer {
 		// for allowing a flight to enter landing stage
 		JPanel row2 = new JPanel();
 		row2.setLayout(new FlowLayout());
-		Button grantLandingBtn = new Button("Grant Landing");
+		JButton grantLandingBtn = new JButton("Grant Landing");
 		grantLandingBtn.setSize(200, 50);
-		grantLandingBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				grantLanding();
-			}
-		});
+		grantLandingBtn.addActionListener(e ->grantLanding());
 		row2.add(grantLandingBtn);
 
 		// button for assigning gate
-		Button flightLandedBtn = new Button("Flight Landed");
-		flightLandedBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				flightLanded();
-			}
-		});
+		JButton flightLandedBtn = new JButton("Flight Landed");
+		flightLandedBtn.addActionListener(e ->flightLanded());
 		flightLandedBtn.setSize(200, 50);
 
 		Container contentPane = getContentPane();

@@ -222,7 +222,7 @@ public class ManagementRecord {
 	  if(status == 17)
 		  return "AWAITING TAKEOFF";
 	  if(status == 18)
-		  return "DEPARTING";
+		  return "TAKEN OFF";
 
 	  // default
 	  return "";
@@ -266,7 +266,7 @@ public class ManagementRecord {
               return 16;
           case "AWAITING TAKEOFF":
               return 17;
-          case "DEPARTING":
+          case "TAKEN OFF":
               return 18;
           default:
               return -1;
@@ -309,7 +309,7 @@ public class ManagementRecord {
   * Status must have been either IN_TRANSIT or DEPARTING_THROUGH_LOCAL_AIRSPACE, and becomes FREE (and the flight details are cleared).
   * @preconditions Status is IN_TRANSIT or DEPARTING_THROUGH_LOCAL_AIRSPACE*/
   public void radarLostContact(){
-    if (status != IN_TRANSIT || status != DEPARTING_THROUGH_LOCAL_AIRSPACE) {
+    if (status != IN_TRANSIT && status != DEPARTING_THROUGH_LOCAL_AIRSPACE) {
       System.out.println("Invalid status: " + status);
       return;
     }
@@ -348,20 +348,18 @@ public class ManagementRecord {
   * The status must have been READY_FOR_CLEAN_MAINT or CLEAN_AWAIT_MAINT and becomes FAULTY_AWAIT_CLEAN or AWAIT_REPAIR respectively.
   * @preconditions Status is READY_FOR_CLEAN_MAINT or CLEAN_AWAIT_MAINT*/
   public void faultsFound(String description){
-    if (status == READY_CLEAN_AND_MAINT) {
-      System.out.println("There was a fault found: " + description + ". Changing status to FAULTY_AWAIT_CLEAN");
-      status = FAULTY_AWAIT_CLEAN;
-      // set the faults description
-      faultDescription = description;
-    }
-    else if (status == CLEAN_AWAIT_MAINT) {
-      System.out.println("There was a fault found: " + description + ". Changing status to AWAIT_REPAIR");
-      status = AWAIT_REPAIR;
-      // set the faults description
-      faultDescription = description;
-    } else {
-      System.out.println("Invalid status: " + status + ". There was a fault found: " + description);
-    }
+      if (status == ManagementRecord.READY_CLEAN_AND_MAINT) {
+          // faults were found, flight hasn't yet been cleaned
+          setStatus(ManagementRecord.FAULTY_AWAIT_CLEAN);
+          faultDescription = description;
+      } else if (status == ManagementRecord.CLEAN_AWAIT_MAINT) {
+          // faults found, flight is already clean
+          // set flight to be repaired
+          setStatus(ManagementRecord.AWAIT_REPAIR);
+          faultDescription = description;
+      } else {
+          System.out.println("Invalid status: " + status + ". There was a fault found: " + description);
+      }
   }
 
 /** The given passenger is boarding this aircraft.

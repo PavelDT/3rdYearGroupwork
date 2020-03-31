@@ -185,7 +185,7 @@ public class AircraftManagementDatabase extends Observable {
 	 * This operation finds a currently FREE MR and forwards the radarDetect request
 	 * to it for recording.
 	 */
-	public void radarDetect(FlightDescriptor fd) {
+	public boolean radarDetect(FlightDescriptor fd) {
 
 		for (int i = 0; i < managementRecords.length; i++) {
 			if (managementRecords[i].getStatus() == ManagementRecord.FREE) {
@@ -199,12 +199,13 @@ public class AircraftManagementDatabase extends Observable {
 
 				// A free management record was found
 				// stop looping for efficiency.
-				break;
+				return true;
 			}
 		}
 
 		// todo -- do something if all 10 slots are full.
 		// e.g. raise an alert in the radar
+		return false;
 	}
 
 	/**
