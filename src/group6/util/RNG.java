@@ -85,14 +85,18 @@ public class RNG {
 	 * @return
 	 */
 	private static PassengerList generatePassengers() {
-		BufferedReader reader;
+
 		List<String> temps = new ArrayList<String>();
 		PassengerList passengerList = new PassengerList();
 
 		try {
 
-			reader = new BufferedReader(new FileReader("resource/Names.txt"));
+			// use a classlaoder to statically access the resource
+			// enables packaging app as a jar
+			ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+			String filePath = classLoader.getResource("Names.txt").getFile();
 
+			BufferedReader reader = new BufferedReader(new FileReader(filePath));
 			String line = reader.readLine();
 
 			while (line != null) {

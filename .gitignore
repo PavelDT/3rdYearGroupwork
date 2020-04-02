@@ -3,6 +3,7 @@
 /idea
 *.iml
 out/
+src/META-INF/
 
 # eclipse specific
 *.pydevproject

@@ -84,6 +84,20 @@ public class Main extends JFrame {
 	 */
 	public Main() {
 
+		// set native look and feel, applies styles to various UI controls to
+		// make the application look like the native OS controls
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (ClassNotFoundException cnfe) {
+			cnfe.printStackTrace();
+		} catch (InstantiationException ie) {
+			ie.printStackTrace();
+		} catch (IllegalAccessException iae) {
+			iae.printStackTrace();
+		} catch (UnsupportedLookAndFeelException ulafe) {
+			ulafe.printStackTrace();
+		}
+
 		setBounds(UISettings.MainBound);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
