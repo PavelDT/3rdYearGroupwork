@@ -1,13 +1,16 @@
 package group6;
 
 import group6.controller.AircraftManagementDatabaseTest;
+import group6.controller.GateInfoTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 
 @Suite.SuiteClasses({
-        AircraftManagementDatabaseTest.class
+        AircraftManagementDatabaseTest.class,
+        GateInfoTest.class
+
 })
 
 /**
