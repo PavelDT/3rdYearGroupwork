@@ -13,17 +13,36 @@ import group6.controller.AircraftManagementDatabase;
 import group6.model.ManagementRecord;
 import group6.util.UISettings;
 
+/**
+ * This Class represents the LATC
+ * This grants permission to incoming aircrafts to land at the airport
+ *
+ */
 public class LATC extends JFrame implements Observer {
 
+	/**
+	 * The LATC Screen interface has access to the
+	 * AircraftManagementDatabase.
+	 *
+	 * @clientCardinality 1
+	 * @supplierCardinality 1
+	 * @label accesses/observes
+	 * @directed
+	 */
 	private AircraftManagementDatabase aircraftManagementDatabase;
 
-	/** The user-defined model of the flights */
+	/**
+	 * Instance of DefaultTableModel
+	 */
 	private DefaultTableModel model;
 
+	/**
+	 * Instance of JTable
+	 */
 	private JTable table;
 
 	/**
-	 * Create the dialog.
+	 * Constructor
 	 */
 	public LATC(AircraftManagementDatabase aircraftManagementDatabase) {
 		this.aircraftManagementDatabase = aircraftManagementDatabase;
@@ -32,7 +51,7 @@ public class LATC extends JFrame implements Observer {
 		setSize(UISettings.VIEW_WIDTH, UISettings.VIEW_HEIGHT);
 		setTitle("LATC");
 
-
+		//Make model selectable but not editable
 		model = new DefaultTableModel() {
 			@Override
 			public boolean isCellEditable(int row, int column) {
@@ -90,6 +109,9 @@ public class LATC extends JFrame implements Observer {
 		setVisible(true);
 	}
 
+	/**
+	 * Grants landing permission to incoming plane
+	 */
 	private void grantLanding() {
 		if (table.getSelectionModel().isSelectionEmpty() == true) {
 			JOptionPane.showMessageDialog(null, "Please select a flight!");
@@ -111,6 +133,9 @@ public class LATC extends JFrame implements Observer {
 		aircraftManagementDatabase.setStatus(mCode, ManagementRecord.LANDING);
 	}
 
+	/**
+	 * Changes the status of the plane to landed
+	 */
 	private void flightLanded() {
 		if (table.getSelectionModel().isSelectionEmpty() == true) {
 			JOptionPane.showMessageDialog(null, "Please select a flight!");
@@ -131,6 +156,9 @@ public class LATC extends JFrame implements Observer {
 		aircraftManagementDatabase.setStatus(mCode, ManagementRecord.LANDED);
 	}
 
+	/**
+	 * Updates the view
+	 */
 	@Override
 	public void update(Observable observable, Object o) {
 		model.setRowCount(0);

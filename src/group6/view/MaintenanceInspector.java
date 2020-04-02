@@ -9,19 +9,18 @@ import group6.controller.AircraftManagementDatabase;
 import group6.model.ManagementRecord;
 import group6.util.UISettings;
 
-
 import java.awt.*;
 import java.util.Observable;
 import java.util.Observer;
 
-
 /**
- * An interface to SAAMS:
- * Maintenance Inspector Screen:
- * Inputs events from the Maintenance Inspector, and displays aircraft information.
- * This class is a controller for the AircraftManagementDatabase: sending it messages to change the aircraft status information.
- * This class also registers as an observer of the AircraftManagementDatabase, and is notified whenever any change occurs in that <<model>> element.
- * See written documentation.
+ * An interface to SAAMS: Maintenance Inspector Screen: Inputs events from the
+ * Maintenance Inspector, and displays aircraft information. This class is a
+ * controller for the AircraftManagementDatabase: sending it messages to change
+ * the aircraft status information. This class also registers as an observer of
+ * the AircraftManagementDatabase, and is notified whenever any change occurs in
+ * that <<model>> element. See written documentation.
+ * 
  * @stereotype boundary/view/controller
  * @url element://model:project::SAAMS/design:node:::id4tg7xcko4qme4cko4swuu.node146
  * @url element://model:project::SAAMS/design:view:::id15rnfcko4qme4cko4swib
@@ -32,9 +31,8 @@ import java.util.Observer;
 
 public class MaintenanceInspector extends JFrame implements Observer {
 
-	private final AircraftManagementDatabase aircraftManagementDatabase;
 	/**
-	 * The Refuelling Supervisor Screen interface has access to the
+	 * Maintenance Inspector Screen interface has access to the
 	 * AircraftManagementDatabase.
 	 * 
 	 * @supplierCardinality 1
@@ -42,15 +40,28 @@ public class MaintenanceInspector extends JFrame implements Observer {
 	 * @label accesses/observes
 	 * @directed
 	 */
+	private final AircraftManagementDatabase aircraftManagementDatabase;
 
-	// table for the flights and their status
-	private JTable table;
-	// model of the flights list
+	/**
+	 * Instance of DefaultTableModel
+	 */
 	private DefaultTableModel model;
-	// button for repairing faulty machines
+
+	/**
+	 * Instance of JTable
+	 */
+	private JTable table;
+
+	/**
+	 * Instance of JButton Plane repaired
+	 */
 	JButton repairedBtn;
 
-
+	/**
+	 * Constructor
+	 * 
+	 * @param aircraftManagementDatabase
+	 */
 	public MaintenanceInspector(AircraftManagementDatabase aircraftManagementDatabase) {
 
 		this.aircraftManagementDatabase = aircraftManagementDatabase;
@@ -64,6 +75,8 @@ public class MaintenanceInspector extends JFrame implements Observer {
 		JPanel row0 = new JPanel();
 		row0.setBorder(new EmptyBorder(0, 0, 10, 0));
 		row0.setLayout(new BorderLayout());
+
+		// Make model selectable but not editable
 		model = new DefaultTableModel() {
 			@Override
 			public boolean isCellEditable(int row, int column) {
@@ -95,7 +108,6 @@ public class MaintenanceInspector extends JFrame implements Observer {
 		faultsFoundBtn.addActionListener(e -> faultsFound());
 		row1.add(faultsFoundBtn);
 
-
 		repairedBtn = new JButton("Repair Flight");
 		// Java 8 lambda, they're beautiful
 		repairedBtn.addActionListener(e -> repaired());
@@ -113,15 +125,21 @@ public class MaintenanceInspector extends JFrame implements Observer {
 		setVisible(true);
 	}
 
+	/**
+	 * Listens for selection of the rows
+	 */
 	private void onRowClick() {
 		int selectedIndex = table.getSelectedRow();
-		if (selectedIndex != -1 && (int)model.getValueAt(selectedIndex, 2) == ManagementRecord.AWAIT_REPAIR) {
+		if (selectedIndex != -1 && (int) model.getValueAt(selectedIndex, 2) == ManagementRecord.AWAIT_REPAIR) {
 			repairedBtn.setEnabled(true);
 		} else {
 			repairedBtn.setEnabled(false);
 		}
 	}
 
+	/**
+	 * No faults found with the aircraft
+	 */
 	private void noFaults() {
 		if (table.getSelectionModel().isSelectionEmpty() == true) {
 			JOptionPane.showMessageDialog(null, "Please select a flight!");
@@ -131,7 +149,7 @@ public class MaintenanceInspector extends JFrame implements Observer {
 
 		int selectedRowIndex = table.getSelectedRow();
 		// the the id of the managent record representing the flight
-		int mCode = (int)model.getValueAt(selectedRowIndex, 0);
+		int mCode = (int) model.getValueAt(selectedRowIndex, 0);
 		int status = aircraftManagementDatabase.getStatus(mCode);
 
 		if (status == ManagementRecord.READY_CLEAN_AND_MAINT) {
@@ -143,6 +161,9 @@ public class MaintenanceInspector extends JFrame implements Observer {
 		}
 	}
 
+	/**
+	 * Faults found on the aircraft
+	 */
 	private void faultsFound() {
 		if (table.getSelectionModel().isSelectionEmpty() == true) {
 			JOptionPane.showMessageDialog(null, "Please select a flight!");
@@ -152,11 +173,14 @@ public class MaintenanceInspector extends JFrame implements Observer {
 
 		int selectedRowIndex = table.getSelectedRow();
 		// the the id of the managent record representing the flight
-		int mCode = (int)model.getValueAt(selectedRowIndex, 0);
+		int mCode = (int) model.getValueAt(selectedRowIndex, 0);
 		// this is for finding faults
 		aircraftManagementDatabase.faultsFound(mCode, "Some stuff broke - RNG THIS");
 	}
 
+	/**
+	 * The plane has been repaired
+	 */
 	private void repaired() {
 		if (table.getSelectionModel().isSelectionEmpty() == true) {
 			JOptionPane.showMessageDialog(null, "Please select a flight!");
@@ -166,7 +190,7 @@ public class MaintenanceInspector extends JFrame implements Observer {
 
 		int selectedRowIndex = table.getSelectedRow();
 		// the the id of the managent record representing the flight
-		int mCode = (int)model.getValueAt(selectedRowIndex, 0);
+		int mCode = (int) model.getValueAt(selectedRowIndex, 0);
 		int status = aircraftManagementDatabase.getStatus(mCode);
 
 		if (status == ManagementRecord.AWAIT_REPAIR) {
@@ -176,6 +200,9 @@ public class MaintenanceInspector extends JFrame implements Observer {
 		}
 	}
 
+	/**
+	 * Updates the view
+	 */
 	@Override
 	public void update(Observable observable, Object o) {
 		// empty the table
@@ -183,8 +210,8 @@ public class MaintenanceInspector extends JFrame implements Observer {
 
 		// loop over every management record to update table
 		int maxRecords = aircraftManagementDatabase.maxMRs;
-		for (int i=0; i<maxRecords; i++) {
-			//int flightStatus = aircraftManagementDatabase.getStatus(i);
+		for (int i = 0; i < maxRecords; i++) {
+			// int flightStatus = aircraftManagementDatabase.getStatus(i);
 			int flightStatus = aircraftManagementDatabase.getStatus(i);
 			// Status is displayd if its one of the below 5:
 			// READY_CLEAN_AND_MAINT = 8;
@@ -192,11 +219,11 @@ public class MaintenanceInspector extends JFrame implements Observer {
 			// CLEAN_AWAIT_MAINT = 10;
 			// OK_AWAIT_CLEAN = 11;
 			// AWAIT_REPAIR = 12;
-			if (flightStatus >= ManagementRecord.READY_CLEAN_AND_MAINT &&
-				flightStatus <= ManagementRecord.AWAIT_REPAIR) {
+			if (flightStatus >= ManagementRecord.READY_CLEAN_AND_MAINT
+					&& flightStatus <= ManagementRecord.AWAIT_REPAIR) {
 				// update table
 				String code = aircraftManagementDatabase.getFlightCode(i);
-				model.addRow(new Object[]{i, code, flightStatus});
+				model.addRow(new Object[] { i, code, flightStatus });
 			}
 		}
 	}

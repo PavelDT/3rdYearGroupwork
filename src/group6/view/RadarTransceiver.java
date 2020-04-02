@@ -44,15 +44,51 @@ import java.awt.BorderLayout;
  */
 public class RadarTransceiver extends JFrame implements Observer {
 
+	/**
+	 * Instance of AircraftManagementDatabase
+	 */
 	AircraftManagementDatabase aircraftManagementDatabase;
+
+	/**
+	 * Instance of JTable
+	 */
 	private JTable table;
+
+	/**
+	 * Instance of DefaultTableModel
+	 */
 	private static DefaultTableModel model;
+
+	/**
+	 * Instance of JButton
+	 */
 	private JButton btnEnter;
+
+	/**
+	 * Instance of JButton
+	 */
 	private JButton btnLeave;
+
+	/**
+	 * Instance of JButton
+	 */
 	private JButton btnViewPassenger;
+
+	/**
+	 * Instance of JScrollPane
+	 */
 	private JScrollPane scrollPane;
+
+	/**
+	 * Instance of JTextArea
+	 */
 	private JTextArea textArea;
 
+	/**
+	 * Constructor
+	 * 
+	 * @param aircraftManagementDatabase
+	 */
 	public RadarTransceiver(AircraftManagementDatabase aircraftManagementDatabase) {
 		this.aircraftManagementDatabase = aircraftManagementDatabase;
 
@@ -151,7 +187,7 @@ public class RadarTransceiver extends JFrame implements Observer {
 
 		btnLeave.setEnabled(false);
 		btnViewPassenger.setEnabled(false);
-		
+
 		textArea = new JTextArea();
 		textArea.setLineWrap(true);
 		sl_panel.putConstraint(SpringLayout.NORTH, textArea, 6, SpringLayout.SOUTH, label_1);
@@ -160,21 +196,18 @@ public class RadarTransceiver extends JFrame implements Observer {
 		sl_panel.putConstraint(SpringLayout.EAST, textArea, 202, SpringLayout.EAST, scrollPane);
 		textArea.setVisible(true);
 		panel.add(textArea);
-		
-		
-		
-		
+
 		aircraftManagementDatabase.addObserver(this);
 
-		//TODO change colours of rows if planes are just passing by or in transit
-		
+		// TODO change colours of rows if planes are just passing by or in transit
+
 		table.getSelectionModel().addListSelectionListener(e -> {
 			ListSelectionModel lsm = (ListSelectionModel) e.getSource();
 
 			if (!lsm.isSelectionEmpty()) {
-				int mCode = (int)model.getValueAt(table.getSelectedRow(), 0);
-				if (aircraftManagementDatabase.getStatus(mCode) == ManagementRecord.DEPARTING_THROUGH_LOCAL_AIRSPACE ||
-					aircraftManagementDatabase.getStatus(mCode) == ManagementRecord.IN_TRANSIT) {
+				int mCode = (int) model.getValueAt(table.getSelectedRow(), 0);
+				if (aircraftManagementDatabase.getStatus(mCode) == ManagementRecord.DEPARTING_THROUGH_LOCAL_AIRSPACE
+						|| aircraftManagementDatabase.getStatus(mCode) == ManagementRecord.IN_TRANSIT) {
 					btnLeave.setEnabled(true);
 				}
 				btnViewPassenger.setEnabled(true);
@@ -198,10 +231,9 @@ public class RadarTransceiver extends JFrame implements Observer {
 		}
 	}
 
-	// THIS NEEDS TO LOOP THROUGH THE AircraftManagementDatabase AND FIND THE FLIGHT
-	// CODE OF THE FLIGHT
-	// IT THEN NEEDS TO CALL METHOD IN AircraftManagementDatabase CALLED
-	// radarLostConatact and pass through the flight code
+	/**
+	 * Aircraft Leaving the airpsace
+	 */
 	private void leaveAirspace() {
 
 		if (table.getSelectionModel().isSelectionEmpty() == true) {
@@ -216,8 +248,9 @@ public class RadarTransceiver extends JFrame implements Observer {
 		textArea.setText("");
 	}
 
-	// NEED TO GET THE PASSENGERLIST FROM THE SELECTED ROW OF THE JLIST AND DISPLAY
-	// TO JTEXT AREA
+	/**
+	 * Views the passenger List
+	 */
 	private void viewPassengerList() {
 
 		if (table.getSelectionModel().isSelectionEmpty() == true) {
@@ -241,11 +274,14 @@ public class RadarTransceiver extends JFrame implements Observer {
 
 	}
 
+	/**
+	 * Updates the view
+	 */
 	@Override
 	public void update(Observable observable, Object o) {
 		// reset the flights wanting to land list
 		model.setRowCount(0);
-		
+
 		// when the observer (this UI) is updated
 		// update the UI to display all flights wanting to land.
 		for (int i : aircraftManagementDatabase.getWithStatus(ManagementRecord.WANTING_TO_LAND)) {
@@ -272,22 +308,22 @@ public class RadarTransceiver extends JFrame implements Observer {
 
 			SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
 			Date date = new Date();
-			
+
 			model.addRow(new Object[] { i, fd.getFlightCode(), fd.toString(), formatter.format(date) });
 		}
-		
+
 		for (int i : aircraftManagementDatabase.getWithStatus(ManagementRecord.IN_TRANSIT)) {
 
-            String flightCode = aircraftManagementDatabase.getFlightCode(i);
-            Itinerary itinerary = aircraftManagementDatabase.getItinerary(i);
-            PassengerList passengerList = aircraftManagementDatabase.getPassengerList(i);
+			String flightCode = aircraftManagementDatabase.getFlightCode(i);
+			Itinerary itinerary = aircraftManagementDatabase.getItinerary(i);
+			PassengerList passengerList = aircraftManagementDatabase.getPassengerList(i);
 
-            FlightDescriptor fd = new FlightDescriptor(flightCode, itinerary, passengerList);
+			FlightDescriptor fd = new FlightDescriptor(flightCode, itinerary, passengerList);
 
-            SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
-            Date date = new Date();
+			SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+			Date date = new Date();
 
-            model.addRow(new Object[] { i, fd.getFlightCode(), fd.toString(), formatter.format(date) });
-        }
+			model.addRow(new Object[] { i, fd.getFlightCode(), fd.toString(), formatter.format(date) });
+		}
 	}
 }

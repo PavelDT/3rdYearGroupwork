@@ -14,6 +14,12 @@ import group6.model.Gate;
 import group6.model.ManagementRecord;
 import group6.util.UISettings;
 
+/**
+ * 
+ * This Class represents the GOC The GOC (Ground Operations Controller) gives
+ * ground clearance to the incoming flights
+ *
+ */
 public class GOC extends JFrame implements Observer {
 
 	/**
@@ -26,19 +32,61 @@ public class GOC extends JFrame implements Observer {
 	 * @directed
 	 */
 	private AircraftManagementDatabase aircraftManagementDatabase;
+
+	/**
+	 * The Ground Operations Controller Screen interface has access to the
+	 * GateInfoDatabase.
+	 *
+	 * @clientCardinality 1
+	 * @supplierCardinality 1
+	 * @label accesses/observes
+	 * @directed
+	 */
 	private GateInfoDatabase gateInfoDatabase;
 
-	// table for the flights and their status
+	/**
+	 * Instance of JTable
+	 */
 	private JTable table;
-	// for the available gates
+
+	/**
+	 * Instance of JComboBox Conatains all the available gates
+	 */
 	private JComboBox<Integer> gatesComboBox;
-	// model of the flights list
+
+	/**
+	 * Instance of DefaultTableModel
+	 */
 	private DefaultTableModel model;
+
+	/**
+	 * Instance of JButton Assign Gate
+	 */
 	private JButton btnAssignGate;
+
+	/**
+	 * Instance of JButton Grant Ground Clearance
+	 */
 	private JButton btnGrantGroundClearance;
+
+	/**
+	 * Instance of JButton Take Off
+	 */
 	private JButton takeOffBtn;
+
+	/**
+	 * Instance of JButton Taxi the Plane
+	 */
 	private JButton taxiBtn;
+
+	/**
+	 * Instance of JPanel
+	 */
 	private JPanel panel;
+
+	/**
+	 * Instance of JScrollPane
+	 */
 	private JScrollPane scrollPane;
 
 	/**
@@ -80,6 +128,7 @@ public class GOC extends JFrame implements Observer {
 		sl_panel.putConstraint(SpringLayout.EAST, scrollPane, 413, SpringLayout.WEST, panel);
 		panel.add(scrollPane);
 
+		//Make model selectable but not editable
 		model = new DefaultTableModel() {
 			@Override
 			public boolean isCellEditable(int row, int column) {
@@ -177,6 +226,9 @@ public class GOC extends JFrame implements Observer {
 		aircraftManagementDatabase.setStatus(mCode, ManagementRecord.GROUND_CLEARANCE_GRANTED);
 	}
 
+	/**
+	 * Assigsn a gate to grounded aircraft
+	 */
 	public void assignGate() {
 		if (table.getSelectionModel().isSelectionEmpty() == true) {
 			JOptionPane.showMessageDialog(null, "Please select a flight!");
@@ -217,6 +269,9 @@ public class GOC extends JFrame implements Observer {
 		}
 	}
 
+	/**
+	 * Taxi the aircraft
+	 */
 	private void taxiFlight() {
 		if (table.getSelectionModel().isSelectionEmpty() == true) {
 			JOptionPane.showMessageDialog(null, "Please select a flight!");
@@ -237,6 +292,9 @@ public class GOC extends JFrame implements Observer {
 		}
 	}
 
+	/**
+	 * Allow plane to depart
+	 */
 	private void takeOff() {
 		if (table.getSelectionModel().isSelectionEmpty() == true) {
 			JOptionPane.showMessageDialog(null, "Please select a flight!");
@@ -260,6 +318,9 @@ public class GOC extends JFrame implements Observer {
 		}
 	}
 
+	/**
+	 * Event Listeners for JTable
+	 */
 	private void onRowClick() {
 		disableAll();
 
@@ -284,6 +345,9 @@ public class GOC extends JFrame implements Observer {
 		}
 	}
 
+	/**
+	 * Updates the view
+	 */
 	@Override
 	public void update(Observable observable, Object o) {
 
@@ -309,6 +373,9 @@ public class GOC extends JFrame implements Observer {
 		}
 	}
 
+	/**
+	 * Disables all buttons
+	 */
 	public void disableAll() {
 		btnGrantGroundClearance.setEnabled(false);
 		btnAssignGate.setEnabled(false);

@@ -2,6 +2,9 @@ package group6.util;
 
 import java.awt.*;
 
+/**
+ *This class contains static objects that can be used for the location of the interfaces
+ */
 public class UISettings {
 	public static final int VIEW_HEIGHT = 300;
 	public static final int VIEW_WIDTH = 450;

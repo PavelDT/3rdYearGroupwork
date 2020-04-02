@@ -57,17 +57,52 @@ public class GateConsole extends JFrame implements Observer, ActionListener {
 	 */
 	private int gateNumber;
 
-	private int currentRecord = -1;
-
+	/**
+	 * Instances of JButton
+	 * Flight Docked
+	 */
 	private JButton flightDocked;
+	
+	/**
+	 * Instances of JButton
+	 * Flight Unloaded
+	 */
 	private JButton flightUnloaded;
+	
+	/**
+	 * Instances of JButton
+	 * Add Passenger
+	 */
 	private JButton addPassenger;
-	private JLabel gateStatus;
-	private JTextArea gateInformation;
-	private JTextArea passengerList;
+	
+	/**
+	 * Instances of JButton
+	 * Ready to Depart
+	 */
 	private JButton departReadyBtn;
+	
+	/**
+	 * Instances of JButton
+	 * Upload Passenger List
+	 */
 	private JButton uploadPassengerListBtn;
+	
+	/**
+	 * Instance of JTextArea
+	 * Displays the gate information
+	 */
+	private JTextArea gateInformation;
+	
+	/**
+	 * Instance of JTextArea
+	 * Displays the passenger List
+	 */
+	private JTextArea passengerList;
 
+	/**
+	 * Instance of JLabel - displays the status of gate
+	 */
+	private JLabel gateStatus;
 
 	/**
 	 * Class constructor
@@ -164,6 +199,9 @@ public class GateConsole extends JFrame implements Observer, ActionListener {
 		setVisible(true);
 	}
 
+	/**
+	 * JButton action Listeners
+	 */
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == flightDocked) {
 			dockFlight();
@@ -178,6 +216,9 @@ public class GateConsole extends JFrame implements Observer, ActionListener {
 		}
 	}
 
+	/**
+	 * This method docks the flight 
+	 */
 	private void dockFlight() {
 		gateInfoDatabase.docked(this.gateNumber);
 		int mCode = gateInfoDatabase.getFlightCodeByGate(gateNumber);
@@ -192,6 +233,9 @@ public class GateConsole extends JFrame implements Observer, ActionListener {
 		gateStatus.setText("Flight Unloading");
 	}
 
+	/**
+	 * This method unloads the flight
+	 */
 	private void unloadFlight() {
 		int mCode = gateInfoDatabase.getFlightCodeByGate(gateNumber);
 		aircraftManagementDatabase.setStatus(mCode, ManagementRecord.READY_CLEAN_AND_MAINT);
@@ -208,6 +252,9 @@ public class GateConsole extends JFrame implements Observer, ActionListener {
 		gateStatus.setText("Flight Unloaded");
 	}
 
+	/**
+	 * This method adds the passengers to the departing flight
+	 */
 	private void addPassengerToFlight() {
 		PassengerDetails passengerName = new PassengerDetails(JOptionPane.showInputDialog("Passenger Name"));
 		int mCode = gateInfoDatabase.getFlightCodeByGate(gateNumber);
@@ -215,17 +262,22 @@ public class GateConsole extends JFrame implements Observer, ActionListener {
 		// no status update to be done, multiple passangers can be added.
 	}
 
+	/**
+	 * This method changes the status code to Ready to depart
+	 */
 	private void uploadPassengerList() {
 		int mCode = gateInfoDatabase.getFlightCodeByGate(gateNumber);
 		aircraftManagementDatabase.setStatus(mCode, ManagementRecord.READY_DEPART);
 	}
 
+	/**
+	 * This method changes the status code to Ready to awaiting taxi
+	 */
 	private void depart() {
 		int mCode = gateInfoDatabase.getFlightCodeByGate(gateNumber);
 		aircraftManagementDatabase.setStatus(mCode, ManagementRecord.AWAITING_TAXI);
 	}
 
-	//Taken from somewhere else. Will fix and update as im doing UI
 	@Override
 	public void update(Observable o, Object arg) {
 		int mCode = gateInfoDatabase.getFlightCodeByGate(gateNumber);

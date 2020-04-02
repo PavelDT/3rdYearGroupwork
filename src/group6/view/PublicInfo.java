@@ -39,20 +39,68 @@ public class PublicInfo extends JFrame implements Observer {
 	 * @directed
 	 */
 	private AircraftManagementDatabase aircraftManagementDatabase;
-	// model of the flights list
+
+	/**
+	 * Instance of DefaultTableModel
+	 */
 	private DefaultTableModel departModel;
+
+	/**
+	 * Instance of DefaultTableModel
+	 */
 	private DefaultTableModel arriveModel;
 
+	/**
+	 * Maximum Number of screens
+	 */
 	public static int maxPublicInfoScreens = 2;
+
+	/**
+	 * Instance of JTable
+	 */
 	private JTable arrivalTable;
+
+	/**
+	 * Instance of JTable
+	 */
 	private JTable departTable;
+
+	/**
+	 * Instance of JPanel
+	 */
 	private JPanel arrivalPanel;
+
+	/**
+	 * Instance of JPanel
+	 */
 	private JPanel departurePanel;
+
+	/**
+	 * Instance of JScrollPane
+	 */
 	private JScrollPane AscrollPane;
+
+	/**
+	 * Instance of JScrollPane
+	 */
 	private JScrollPane DscrollPane;
+
+	/**
+	 * Instance of JLabel
+	 */
 	private JLabel lblArrivals;
+
+	/**
+	 * Instance of JLabel
+	 */
 	private JLabel lblDeparts;
 
+	/**
+	 * Constructor
+	 * 
+	 * @param aircraftManagementDatabase
+	 * @param screenNumber
+	 */
 	public PublicInfo(AircraftManagementDatabase aircraftManagementDatabase, int screenNumber) {
 
 		this.aircraftManagementDatabase = aircraftManagementDatabase;
@@ -72,12 +120,12 @@ public class PublicInfo extends JFrame implements Observer {
 		// add frames to window
 		window.add(departurePanel);
 		departurePanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-		
+
 		lblDeparts = new JLabel("Departures");
 		departurePanel.add(lblDeparts);
 		DscrollPane = new JScrollPane();
 		departurePanel.add(DscrollPane);
-		
+
 		lblArrivals = new JLabel("Arrivals");
 		arrivalPanel.add(lblArrivals);
 
@@ -114,9 +162,6 @@ public class PublicInfo extends JFrame implements Observer {
 		DscrollPane.setViewportView(departTable);
 		AscrollPane.setViewportView(arrivalTable);
 
-//		departurePanel.add(departTable);
-//		arrivalPanel.add(arrivalTable);
-
 		int[] waitingToLand = this.aircraftManagementDatabase.getWithStatus(ManagementRecord.WANTING_TO_LAND);
 		int[] groundClearanceGranted = this.aircraftManagementDatabase
 				.getWithStatus(ManagementRecord.GROUND_CLEARANCE_GRANTED);
@@ -142,6 +187,13 @@ public class PublicInfo extends JFrame implements Observer {
 
 	}
 
+	/**
+	 * Adds the aircrafts to the database
+	 * @param index
+	 * @param aircraftManagementDatabase
+	 * @param mrs
+	 * @param aircraftCodes
+	 */
 	private void addAircraftCodes(int index, AircraftManagementDatabase aircraftManagementDatabase, int[] mrs,
 			List<String> aircraftCodes) {
 		for (int i = index, j = 0; j < mrs.length; i++, j++) {
@@ -149,6 +201,9 @@ public class PublicInfo extends JFrame implements Observer {
 		}
 	}
 
+	/**
+	 * Updates the view
+	 */
 	@Override
 	public void update(Observable o, Object a) {
 

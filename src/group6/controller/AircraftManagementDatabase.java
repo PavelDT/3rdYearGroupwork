@@ -41,27 +41,6 @@ import group6.util.RNG;
 public class AircraftManagementDatabase extends Observable {
 
 	/**
-	 * Return the status of the MR with the given mCode supplied as a parameter.
-	 */
-	public int getStatus(int mCode) {
-		return managementRecords[mCode].getStatus();
-	}
-
-	public String getStringStatus(int mCode) {
-		return managementRecords[mCode].getStringStatus();
-	}
-
-	/**
-	 * Accessor for gate number
-	 * 
-	 * @param mCode
-	 * @return returns gate number
-	 */
-	public int getGateNumber(int mCode) {
-		return managementRecords[mCode].getGateNumber();
-	}
-
-	/**
 	 * The array of ManagementRecords. Attribute maxMRs specifies how large this
 	 * array should be. Initialize to a collection of MRs each in the FREE state.
 	 * Note: This array could be replaced by another other suitable collection data
@@ -77,21 +56,17 @@ public class AircraftManagementDatabase extends Observable {
 	private ManagementRecord[] managementRecords;// renamed MRs to managementRecords
 
 	/**
+	 * Singleton implementation to restrict only one instance of this class. using
+	 * static initializer and lazy instantiation.
+	 */
+	private static AircraftManagementDatabase instance;
+
+	/**
 	 * The size of the array MRs holding ManagementRecords.<br />
 	 * <br />
 	 * In this simple system 10 will do!
 	 */
 	public int maxMRs = 10;
-
-	public void setManagementRecords(ManagementRecord[] mrs) {
-		this.managementRecords = mrs;
-	}
-
-	/**
-	 * Singleton implementation to restrict only one instance of this class. using
-	 * static initializer and lazy instantiation.
-	 */
-	private static AircraftManagementDatabase instance;
 
 	/**
 	 * Private constructor to prevent instantiation outside of the getInstance
@@ -104,6 +79,46 @@ public class AircraftManagementDatabase extends Observable {
 			managementRecords[i] = new ManagementRecord();
 			managementRecords[i].setStatus(ManagementRecord.FREE);
 		}
+	}
+
+	/**
+	 * Return the status of the MR with the given mCode supplied as a parameter.
+	 * 
+	 * @param mCode
+	 * @return
+	 */
+	public int getStatus(int mCode) {
+		return managementRecords[mCode].getStatus();
+	}
+
+	/**
+	 * Returns String status of the MR with the given mCode supplied as a parameter.
+	 * 
+	 * @param mCode
+	 * @return
+	 */
+	public String getStringStatus(int mCode) {
+		return managementRecords[mCode].getStringStatus();
+	}
+
+	/**
+	 * Accessor for gate number
+	 * 
+	 * @param mCode
+	 * @return returns gate number
+	 */
+	public int getGateNumber(int mCode) {
+		return managementRecords[mCode].getGateNumber();
+	}
+
+	/**
+	 * Mutator method that sets this classes instance of managementRecords to given
+	 * paramter variable
+	 * 
+	 * @param mrs
+	 */
+	public void setManagementRecords(ManagementRecord[] mrs) {
+		this.managementRecords = mrs;
 	}
 
 	/**

@@ -14,12 +14,13 @@ import java.util.Observable;
 import java.util.Observer;
 
 /**
- * An interface to SAAMS:
- * Refuelling Supervisor Screen:
- * Inputs events from the Refuelling Supervisor, and displays aircraft information.
- * This class is a controller for the AircraftManagementDatabase: sending it messages to change the aircraft status information.
- * This class also registers as an observer of the AircraftManagementDatabase, and is notified whenever any change occurs in that <<model>> element.
- * See written documentation.
+ * An interface to SAAMS: Refuelling Supervisor Screen: Inputs events from the
+ * Refuelling Supervisor, and displays aircraft information. This class is a
+ * controller for the AircraftManagementDatabase: sending it messages to change
+ * the aircraft status information. This class also registers as an observer of
+ * the AircraftManagementDatabase, and is notified whenever any change occurs in
+ * that <<model>> element. See written documentation.
+ * 
  * @stereotype boundary/view/controller
  * @url element://model:project::SAAMS/design:view:::id15rnfcko4qme4cko4swib
  * @url element://model:project::SAAMS/design:node:::id15rnfcko4qme4cko4swib.node107
@@ -28,7 +29,6 @@ import java.util.Observer;
 
 public class RefuellingSupervisor extends JFrame implements Observer {
 
-	private final AircraftManagementDatabase aircraftManagementDatabase;
 	/**
 	 * Refuelling Supervisor interface has access to the AircraftManagementDatabase.
 	 * 
@@ -37,15 +37,26 @@ public class RefuellingSupervisor extends JFrame implements Observer {
 	 * @label accesses/observes
 	 * @directed
 	 */
+	private final AircraftManagementDatabase aircraftManagementDatabase;
 
-	// table for the flights and their status
+	/**
+	 * Instance of JTable
+	 */
 	private JTable table;
-	// model of the flights list
+
+	/**
+	 * Instance of DefaultTableModel
+	 */
 	private DefaultTableModel model;
 
+	/**
+	 * Constructor
+	 * 
+	 * @param aircraftManagementDatabase
+	 */
 	public RefuellingSupervisor(AircraftManagementDatabase aircraftManagementDatabase) {
 		this.aircraftManagementDatabase = aircraftManagementDatabase;
-		
+
 		setTitle("Refuelling Supervisor");
 		setLocation(UISettings.RefuelingSupervisorPosition);
 		setSize(UISettings.VIEW_WIDTH, UISettings.VIEW_HEIGHT);
@@ -90,6 +101,9 @@ public class RefuellingSupervisor extends JFrame implements Observer {
 		setVisible(true);
 	}
 
+	/**
+	 * Allows plane to re-fuel
+	 */
 	private void refuel() {
 		if (table.getSelectionModel().isSelectionEmpty() == true) {
 			JOptionPane.showMessageDialog(null, "Please select a flight!");
@@ -99,7 +113,7 @@ public class RefuellingSupervisor extends JFrame implements Observer {
 
 		int selectedRowIndex = table.getSelectedRow();
 		// the the id of the managent record representing the flight
-		int mCode = (int)model.getValueAt(selectedRowIndex, 0);
+		int mCode = (int) model.getValueAt(selectedRowIndex, 0);
 		int status = aircraftManagementDatabase.getStatus(mCode);
 
 		if (status == ManagementRecord.READY_REFUEL) {
@@ -110,20 +124,23 @@ public class RefuellingSupervisor extends JFrame implements Observer {
 		}
 	}
 
+	/**
+	 * Updates the view
+	 */
 	public void update(Observable o, Object a) {
 		// empty the table
 		model.setRowCount(0);
 
 		// loop over every management record to update table
 		int maxRecords = aircraftManagementDatabase.maxMRs;
-		for (int i=0; i<maxRecords; i++) {
-			//int flightStatus = aircraftManagementDatabase.getStatus(i);
+		for (int i = 0; i < maxRecords; i++) {
+			// int flightStatus = aircraftManagementDatabase.getStatus(i);
 			int flightStatus = aircraftManagementDatabase.getStatus(i);
 			// Status is displayd if its READY_REFUEL
 			if (flightStatus == ManagementRecord.READY_REFUEL) {
 				// update table
 				String code = aircraftManagementDatabase.getFlightCode(i);
-				model.addRow(new Object[]{i, code, flightStatus});
+				model.addRow(new Object[] { i, code, flightStatus });
 			}
 		}
 	}

@@ -22,16 +22,49 @@ import java.awt.Image;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
+/**
+ * This class represents Main. Mains functions to create all interfaces and
+ * databases
+ * 
+ * @author johnr
+ *
+ */
 public class Main extends JFrame {
 
+	/**
+	 * Insatnce of Image representing a radar
+	 */
 	private Image radarGif;
 
+	/**
+	 * Instance of JPanal. This panel will be used to attach components
+	 */
 	private final JPanel contentPanel = new JPanel();
+
+	/**
+	 * Represents a button to start the system
+	 */
 	private JButton btnStart;
+
+	/**
+	 * Represents a button to quit the system
+	 */
 	private JButton btnQuit;
+
+	/**
+	 * JLabel that encapsulates the image
+	 */
 	private JLabel lblImage;
+
+	/**
+	 * JLable that displays the version number
+	 */
 	private JLabel lblVersion;
-	private double versionNo = 1.16;
+
+	/**
+	 * Current version number
+	 */
+	private double versionNo = 1.17;
 
 	/**
 	 * Launch the application.
@@ -51,7 +84,6 @@ public class Main extends JFrame {
 	 */
 	public Main() {
 
-
 		setBounds(UISettings.MainBound);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -69,8 +101,8 @@ public class Main extends JFrame {
 		btnStart.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
-				createInterfaces();
-				btnStart.setEnabled(false);
+				handleStart();
+
 			}
 
 		});
@@ -102,7 +134,7 @@ public class Main extends JFrame {
 		radarGif = new ImageIcon(this.getClass().getResource("/radarGif.gif")).getImage();
 		radarGif = radarGif.getScaledInstance(300, 300, Image.SCALE_DEFAULT);
 		lblImage.setIcon(new ImageIcon(radarGif));
-		
+
 		lblVersion = new JLabel("V." + versionNo);
 		sl_contentPanel.putConstraint(SpringLayout.NORTH, lblVersion, 0, SpringLayout.NORTH, contentPanel);
 		sl_contentPanel.putConstraint(SpringLayout.WEST, lblVersion, 0, SpringLayout.WEST, contentPanel);
@@ -110,18 +142,22 @@ public class Main extends JFrame {
 
 	}
 
+	/**
+	 * Creates the interfaces and databases
+	 */
 	private void createInterfaces() {
 
 		AircraftManagementDatabase aircraftManagementDatabase = AircraftManagementDatabase.getInstance();
 		GateInfoDatabase gateInfoDatabase = GateInfoDatabase.getInstance();
+
 		new GOC(aircraftManagementDatabase, gateInfoDatabase);
 		new LATC(aircraftManagementDatabase);
 		new MaintenanceInspector(aircraftManagementDatabase);
 		new CleaningSupervisor(aircraftManagementDatabase);
 		new RefuellingSupervisor(aircraftManagementDatabase);
 		new RadarTransceiver(aircraftManagementDatabase);
-		for (int publicInfo = 0; publicInfo < PublicInfo.maxPublicInfoScreens; publicInfo ++) {
-			
+		for (int publicInfo = 0; publicInfo < PublicInfo.maxPublicInfoScreens; publicInfo++) {
+
 			new PublicInfo(aircraftManagementDatabase, publicInfo);
 		}
 		for (int gateNumber = 0; gateNumber < GateInfoDatabase.maxGateNumber; gateNumber++) {
@@ -130,6 +166,18 @@ public class Main extends JFrame {
 
 	}
 
+	/**
+	 * Handles the starting of the application
+	 */
+	private void handleStart() {
+		createInterfaces();
+		btnStart.setEnabled(false);
+
+	}
+
+	/**
+	 * Handles exiting the application
+	 */
 	private void handleExit() {
 
 		System.exit(EXIT_ON_CLOSE);

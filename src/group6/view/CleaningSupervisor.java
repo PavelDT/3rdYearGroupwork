@@ -39,11 +39,21 @@ public class CleaningSupervisor extends JFrame implements Observer {
 	 */
 	private AircraftManagementDatabase aircraftManagementDatabase;
 
-	// table for the flights and their status
+	/**
+	 * Instance of JTable
+	 */
 	private JTable table;
-	// model of the flights list
+
+	/**
+	 * Instance of DefaultTableModel
+	 */
 	private DefaultTableModel model;
 
+	/**
+	 * Constructor of CleaningSupervisor
+	 * 
+	 * @param aircraftManagementDatabase
+	 */
 	public CleaningSupervisor(AircraftManagementDatabase aircraftManagementDatabase) {
 
 		this.aircraftManagementDatabase = aircraftManagementDatabase;
@@ -57,6 +67,8 @@ public class CleaningSupervisor extends JFrame implements Observer {
 		JPanel row0 = new JPanel();
 		row0.setBorder(new EmptyBorder(0, 0, 10, 0));
 		row0.setLayout(new BorderLayout());
+
+		// Make model selecatble but not editable
 		model = new DefaultTableModel() {
 			@Override
 			public boolean isCellEditable(int row, int column) {
@@ -92,6 +104,10 @@ public class CleaningSupervisor extends JFrame implements Observer {
 		setVisible(true);
 	}
 
+	/**
+	 * Method that represents a plane being cleaned. It will set that status
+	 * accordingly
+	 */
 	private void planeCleaned() {
 
 		if (table.getSelectionModel().isSelectionEmpty() == true) {
@@ -102,7 +118,7 @@ public class CleaningSupervisor extends JFrame implements Observer {
 
 		int selectedRowIndex = table.getSelectedRow();
 		// the the id of the managent record representing the flight
-		int mCode = (int)model.getValueAt(selectedRowIndex, 0);
+		int mCode = (int) model.getValueAt(selectedRowIndex, 0);
 		int status = aircraftManagementDatabase.getStatus(mCode);
 
 		if (status == ManagementRecord.READY_CLEAN_AND_MAINT) {
@@ -123,6 +139,9 @@ public class CleaningSupervisor extends JFrame implements Observer {
 		}
 	}
 
+	/**
+	 * Updates the view
+	 */
 	@Override
 	public void update(Observable o, Object a) {
 		// empty the table
@@ -130,19 +149,15 @@ public class CleaningSupervisor extends JFrame implements Observer {
 
 		// loop over every management record to update table
 		int maxRecords = aircraftManagementDatabase.maxMRs;
-		for (int i=0; i<maxRecords; i++) {
-			//int flightStatus = aircraftManagementDatabase.getStatus(i);
+		for (int i = 0; i < maxRecords; i++) {
+
 			int flightStatus = aircraftManagementDatabase.getStatus(i);
-			// Status is displayd if its one of the below 4:
-			// READY_CLEAN_AND_MAINT = 8;
-			// FAULTY_AWAIT_CLEAN = 9;
-			// CLEAN_AWAIT_MAINT = 10;
-			// OK_AWAIT_CLEAN = 11;
-			if (flightStatus >= ManagementRecord.READY_CLEAN_AND_MAINT &&
-					flightStatus <= ManagementRecord.OK_AWAIT_CLEAN) {
+
+			if (flightStatus >= ManagementRecord.READY_CLEAN_AND_MAINT
+					&& flightStatus <= ManagementRecord.OK_AWAIT_CLEAN) {
 				// update table
 				String code = aircraftManagementDatabase.getFlightCode(i);
-				model.addRow(new Object[]{i, code, flightStatus});
+				model.addRow(new Object[] { i, code, flightStatus });
 			}
 		}
 	}
