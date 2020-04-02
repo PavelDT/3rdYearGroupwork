@@ -121,7 +121,8 @@ public class Main extends JFrame {
 		new RefuellingSupervisor(aircraftManagementDatabase);
 		new RadarTransceiver(aircraftManagementDatabase);
 		for (int publicInfo = 0; publicInfo < PublicInfo.maxPublicInfoScreens; publicInfo ++) {
-			new PublicInfo(aircraftManagementDatabase);
+			
+			new PublicInfo(aircraftManagementDatabase, publicInfo);
 		}
 		for (int gateNumber = 0; gateNumber < GateInfoDatabase.maxGateNumber; gateNumber++) {
 			new GateConsole(aircraftManagementDatabase, gateInfoDatabase, gateNumber);

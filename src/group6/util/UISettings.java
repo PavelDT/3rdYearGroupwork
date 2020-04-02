@@ -16,7 +16,7 @@ public class UISettings {
 	public static final Point GateConsolePosition1 = new Point(1375, 410);
 	public static final Point GateConsolePosition2= new Point(920, 715);
 	public static final Point GOCPosition = new Point(465, 620);
-	public static final Point PublicInfo0 = new Point(1375, 715);
-	public static final Point PublicInfo1 = new Point(1200, 800);
+	public static final Point PublicInfo = new Point(1375, 715);
+
 
 }

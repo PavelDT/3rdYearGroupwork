@@ -132,7 +132,7 @@ public class GOC extends JFrame implements Observer {
 		sl_panel.putConstraint(SpringLayout.NORTH, taxiBtn, 6, SpringLayout.SOUTH, btnGrantGroundClearance);
 		sl_panel.putConstraint(SpringLayout.WEST, taxiBtn, 0, SpringLayout.WEST, scrollPane);
 		panel.add(taxiBtn);
-		
+
 		takeOffBtn = new JButton("Takeoff");
 		takeOffBtn.addActionListener(e -> takeOff());
 		sl_panel.putConstraint(SpringLayout.SOUTH, takeOffBtn, 0, SpringLayout.SOUTH, taxiBtn);
@@ -164,7 +164,7 @@ public class GOC extends JFrame implements Observer {
 		// we're checking the 3nd column
 //		int flightStatus = ManagementRecord.stringStatusToNumber((String) model.getValueAt(selectedIndex, 2));
 
-		int mCode = (int)model.getValueAt(selectedIndex, 0);
+		int mCode = (int) model.getValueAt(selectedIndex, 0);
 		int flightStatus = aircraftManagementDatabase.getStatus(mCode);
 
 		if (flightStatus != ManagementRecord.WANTING_TO_LAND) {
@@ -317,4 +317,3 @@ public class GOC extends JFrame implements Observer {
 		takeOffBtn.setEnabled(false);
 	}
 }
-
